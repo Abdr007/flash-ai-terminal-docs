@@ -1,6 +1,6 @@
 # Trading Commands
 
-Flash AI Terminal provides deterministic trading commands that map directly to on-chain actions.
+Flash Terminal provides deterministic trading commands that map directly to on-chain actions.
 
 ## Open Position
 
@@ -13,12 +13,12 @@ open <leverage>x <long|short> <asset> $<collateral>
 **Examples:**
 
 ```bash
-open 2x long SOL $10
-open 5x short ETH $200
+open 2x long SOL $100
+open 5x short ETH $500
 open 10x long BTC $1000
 ```
 
-The terminal will display a confirmation panel before execution:
+The terminal displays a confirmation panel before execution:
 
 ```
 CONFIRM TRANSACTION
@@ -26,9 +26,9 @@ CONFIRM TRANSACTION
   Market:      SOL LONG
   Pool:        Crypto.1
   Leverage:    2x
-  Collateral:  $10.00 USDC
-  Size:        $20.00
-  Est. Fee:    $0.02
+  Collateral:  $100.00 USDC
+  Size:        $200.00
+  Est. Fee:    $0.16
   Wallet:      ABDR...7x4f
 
   Risk Preview:
@@ -36,7 +36,7 @@ CONFIRM TRANSACTION
     Est. Liq:     $81.69
     Distance:     45.0%
     Risk:         MEDIUM
-    Exposure:     $0.00 → $20.00
+    Exposure:     $0.00 → $200.00
 ```
 
 Type `yes` to confirm or `no` to cancel.
@@ -54,12 +54,6 @@ close <asset> <long|short>
 ```bash
 close SOL long
 close ETH short
-```
-
-If you have only one position on a market, the side can be omitted:
-
-```bash
-close SOL
 ```
 
 The confirmation shows current position details including unrealized PnL.
@@ -116,21 +110,23 @@ View the trade journal.
 trade history
 ```
 
-In simulation mode, shows all executed trades with entry/exit prices, PnL, and fees. In live mode, provides links to Solscan and Solana FM for on-chain verification.
+**Aliases:** `trades`, `journal`, `history`
+
+In simulation mode, shows all executed trades with entry/exit prices, PnL, and fees. In live mode, provides links to Solscan for on-chain verification.
 
 ## Supported Markets
 
 | Pool | Markets |
 |------|---------|
-| Crypto.1 | SOL, BTC, ETH, ZEC, BNB |
-| Virtual.1 | XAG, XAU, CRUDEOIL, EUR, GBP, USDJPY, USDCNH |
-| Governance.1 | JTO, JUP, PYTH, RAY, HYPE, MET, KMNO |
-| Community.1 | PUMP, BONK, PENGU |
-| Community.2 | WIF |
-| Trump.1 | FARTCOIN |
+| Crypto.1 | SOL, BTC, ETH |
+| Virtual.1 | VIRTUAL |
+| Governance.1 | JTO, JUP, KMNO, RAY, MET, PENGU, HYPE, TRUMP |
+| Community.1 | WIF, BONK, POPCAT, PNUT, AI16Z, FARTCOIN, VINE |
+| Community.2 | PUMP, XRP, DOGE, SUI |
+| Trump.1 | TRUMP, MELANIA |
 | Ore.1 | ORE |
 
-View all markets with:
+View all available markets with:
 
 ```bash
 markets

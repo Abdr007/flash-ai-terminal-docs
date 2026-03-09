@@ -2,7 +2,7 @@
 
 ## System Overview
 
-FAT follows a layered architecture where each component has a single responsibility. User input flows through parsing, validation, and safety checks before reaching the blockchain.
+FT follows a layered architecture where each component has a single responsibility. User input flows through parsing, validation, and safety checks before reaching the blockchain.
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -22,15 +22,15 @@ FAT follows a layered architecture where each component has a single responsibil
          ┌─────────────┼─────────────┐
          │             │             │
   ┌──────▼─────┐ ┌─────▼─────┐ ┌────▼──────┐
-  │  Scanner   │ │ Portfolio │ │  Trading  │
-  │ strategies │ │ exposure  │ │ pipeline  │
+  │flash-tools │ │agent-tools│ │plugin     │
+  │  trading   │ │ analysis  │ │  tools    │
   └──────┬─────┘ └─────┬─────┘ └────┬──────┘
          │             │             │
          └─────────────┼─────────────┘
                        │
 ┌──────────────────────▼──────────────────────┐
-│              FlashClient                    │
-│         tx build + sign + broadcast         │
+│              IFlashClient                   │
+│   FlashClient (live) │ SimulatedClient (sim)│
 └──────────────────────┬──────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────┐
@@ -46,7 +46,7 @@ FAT follows a layered architecture where each component has a single responsibil
 
 ## Trading Pipeline
 
-Every trade passes through a deterministic pipeline. Each stage adds a layer of protection.
+Every trade passes through an 8-stage deterministic pipeline. Each stage adds a layer of protection.
 
 ### Stage 1 — CLI Parser
 
@@ -138,7 +138,7 @@ The reconciler also runs every 60 seconds in the background.
 
 ## Dual Client Architecture
 
-FAT uses an `IFlashClient` interface that abstracts the underlying implementation:
+FT uses an `IFlashClient` interface that abstracts the underlying implementation:
 
 | Client | Mode | Transactions | State |
 |--------|------|-------------|-------|

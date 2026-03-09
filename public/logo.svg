@@ -1,9 +1,5 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="flash-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#26d97f"/>
-      <stop offset="100%" stop-color="#c8e64a"/>
-    </linearGradient>
-  </defs>
-  <path d="M18 2L8 17h6l-2 13 14-15h-7l3-13z" fill="url(#flash-grad)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="10" fill="#0a0e14"/>
+  <path d="M28 6L13 26h10l-2 16 17-22H27l1-14z" fill="#26d97f"/>
+  <text x="10" y="42" fill="#94a3b8" font-family="monospace" font-size="10" font-weight="bold">&gt;_</text>
 </svg>

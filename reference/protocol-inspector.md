@@ -4,23 +4,25 @@
 
 Protocol-wide overview.
 
+**Description:** Displays top-level protocol information including the program ID, total pools and markets, aggregate open interest (long and short), 30-day volume and trade count, protocol fees, and the overall long/short ratio.
+
+**Syntax:**
+
 ```bash
 inspect protocol
 ```
 
-Shows:
-- Program ID
-- Total pools and markets
-- Aggregate open interest (long / short)
-- 30-day volume and trade count
-- Protocol fees
-- Long/short ratio
+**Aliases:** `inspect`
 
 ---
 
 ## inspect pool
 
 Deep-dive into a specific pool.
+
+**Description:** Shows detailed information for a single pool including its on-chain address, supported markets, open interest per market, whale positions, and pool utilization.
+
+**Syntax:**
 
 ```bash
 inspect pool <name>
@@ -38,11 +40,11 @@ inspect pool <name>
 | Trump.1 | FARTCOIN |
 | Ore.1 | ORE |
 
-Shows:
-- Pool address and supported markets
-- Open interest per market
-- Whale positions
-- Pool utilization
+**Example:**
+
+```bash
+inspect pool Crypto.1
+```
 
 ---
 
@@ -50,8 +52,12 @@ Shows:
 
 Deep-dive into a specific market.
 
+**Description:** Provides a detailed view of a single market including trading hours and status, open interest breakdown (long and short), position counts, largest open positions, and risk metrics.
+
+**Syntax:**
+
 ```bash
-inspect market <asset>
+inspect market <market>
 ```
 
 **Examples:**
@@ -61,10 +67,3 @@ inspect market SOL
 inspect market BTC
 inspect market ETH
 ```
-
-Shows:
-- Trading hours and status
-- Open interest breakdown (long / short)
-- Position counts
-- Largest open positions
-- Risk metrics

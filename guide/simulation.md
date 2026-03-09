@@ -1,26 +1,26 @@
 # Simulation Mode
 
-Simulation mode allows traders to test strategies and explore the terminal without executing real transactions.
+Flash Terminal prompts users to select Simulation or Live mode when starting the CLI. Simulation mode enables paper trading with real oracle prices, allowing traders to test strategies without risking funds.
 
 ## How It Works
 
-When `SIMULATION_MODE=true` (the default), the terminal uses a paper trading engine instead of the Flash SDK:
+When Simulation mode is selected at startup, the terminal uses a paper trading engine instead of the Flash SDK:
 
-- Positions are tracked in memory with a virtual USDC balance
-- Prices come from real oracle data (Pyth / CoinGecko)
-- PnL is computed using mark-to-market pricing
-- Fees are simulated at 0.08% (matching Flash Trade's fee structure)
-- No transactions are signed or broadcast
+- **Virtual USDC balance** -- Positions are tracked in memory with a virtual balance
+- **Real-time oracle prices** -- Prices come from live Pyth oracle data
+- **Mark-to-market PnL** -- Positions are valued against current oracle prices
+- **0.08% fee model** -- Fees are simulated to match Flash Trade's fee structure
+- **No transaction signing** -- No transactions are signed or broadcast to the blockchain
 
-## Starting in Simulation Mode
+## Starting the Terminal
 
-Simulation is the default. Simply start the terminal:
+When you start the CLI, you are prompted to select a mode:
 
 ```bash
 flash
 ```
 
-The prompt indicates simulation mode:
+The prompt indicates which mode is active:
 
 ```
 flash [sim] > _
@@ -28,13 +28,13 @@ flash [sim] > _
 
 ## Dry Run
 
-The `dryrun` command compiles and simulates a transaction on-chain without signing or broadcasting.
+The `dryrun` command compiles and simulates a transaction on-chain without signing or broadcasting. This is available regardless of mode selection.
 
 ```bash
 dryrun open 5x long SOL $100
 ```
 
-Output includes:
+Example output:
 
 ```
 DRY-RUN RESULTS
@@ -51,23 +51,12 @@ DRY-RUN RESULTS
     ...
 ```
 
-### What Dry Run Provides
+### Dry Run Use Cases
 
-| Field | Description |
-|-------|-------------|
-| Status | Whether the transaction would succeed |
-| Estimated Fee | Trading fee (0.08% of position size) |
-| Compute Units | CU consumption for priority fee estimation |
-| Entry Price | Expected entry from oracle |
-| Liquidation Price | Estimated liquidation level |
-| Program Logs | Full Solana runtime simulation output |
-
-### When to Use Dry Run
-
-- Before your first live trade on a new market
-- When testing unusual leverage levels
-- When verifying compute unit requirements
-- When debugging transaction failures
+- **Before your first live trade** -- Verify the transaction compiles and the program accepts it
+- **Unusual leverage levels** -- Confirm the protocol allows the leverage on the target market
+- **Compute unit requirements** -- Check CU consumption for priority fee estimation
+- **Debugging** -- Inspect full Solana runtime simulation output for failed transactions
 
 ## Simulation vs Live
 
@@ -76,15 +65,11 @@ DRY-RUN RESULTS
 | Wallet required | No | Yes |
 | Transactions signed | No | Yes |
 | Funds at risk | No | Yes |
-| Oracle prices | Real | Real |
-| Fee simulation | 0.08% | Actual protocol fee |
+| Oracle prices | Real (Pyth) | Real (Pyth) |
+| Fee model | 0.08% simulated | Actual protocol fee |
 | Position tracking | In-memory | On-chain |
-| Confirmation required | Yes | Yes (strict) |
+| Risk preview | Yes | Yes |
 
-## Safety Guarantee
+## Safety
 
-Simulation mode is locked at startup. It cannot be changed to live mode mid-session. This prevents accidental transitions from paper trading to real execution.
-
-::: tip
-Start every new strategy in simulation mode. Once you understand the execution flow, transition to live mode with small positions.
-:::
+The mode is selected at startup and locked for the entire session. There is no command or API to switch between Simulation and Live mode mid-session. This prevents accidental transitions from paper trading to real execution.

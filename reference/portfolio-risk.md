@@ -2,37 +2,49 @@
 
 ## portfolio
 
-Portfolio summary with exposure breakdown.
+Portfolio summary with balance, positions, PnL, and exposure.
+
+**Description:** Displays the full portfolio overview including wallet balance, total collateral deployed, total exposure (leveraged size), unrealized PnL, and per-position allocation breakdown.
+
+**Syntax:**
 
 ```bash
 portfolio
 ```
 
-Shows: wallet balance, total collateral, total exposure, unrealized PnL, and per-position allocation.
+**Aliases:** `balance`, `account`
 
 ---
 
 ## dashboard
 
-Full trading dashboard.
+Comprehensive trading dashboard.
+
+**Description:** Combines portfolio summary, open positions, market overview, risk level, largest position, funding rates, and realized PnL into a single view.
+
+**Syntax:**
 
 ```bash
 dashboard
 ```
 
-Comprehensive view including: portfolio summary, open positions, market overview, risk level, largest position, realized PnL, and funding rates.
+**Aliases:** `dash`
 
 ---
 
 ## risk report
 
-Risk analysis across all positions.
+Per-position liquidation distance and risk level.
+
+**Description:** Analyzes each open position for liquidation risk. Shows liquidation distance as a percentage, assigns a risk level (healthy, warning, or critical), and suggests actions for at-risk positions.
+
+**Syntax:**
 
 ```bash
 risk report
 ```
 
-Shows per-position: liquidation distance, risk level, and suggested actions.
+**Aliases:** `risk`
 
 ---
 
@@ -40,21 +52,23 @@ Shows per-position: liquidation distance, risk level, and suggested actions.
 
 Enable real-time liquidation risk monitoring.
 
+**Description:** Starts a background monitor that tracks position risk continuously. Prices refresh every 5 seconds, positions refresh every 20 seconds. Alerts fire on risk level transitions using hysteresis thresholds to prevent oscillation. Automatically suggests collateral additions for critical positions.
+
+**Syntax:**
+
 ```bash
 risk monitor on
 ```
-
-Background monitoring with:
-- Price refresh every 5 seconds
-- Position refresh every 20 seconds
-- Alerts on risk level changes (with hysteresis)
-- Auto-collateral suggestions for critical positions
 
 ---
 
 ## risk monitor off
 
-Disable risk monitoring.
+Disable real-time risk monitoring.
+
+**Description:** Stops the background risk monitor and suppresses all risk alerts.
+
+**Syntax:**
 
 ```bash
 risk monitor off
@@ -64,7 +78,11 @@ risk monitor off
 
 ## exposure
 
-View portfolio exposure breakdown.
+Portfolio exposure breakdown by market and direction.
+
+**Description:** Shows how portfolio exposure is distributed across markets and directions (long/short). Flags concentration risk when any single position exceeds 30% of total exposure.
+
+**Syntax:**
 
 ```bash
 exposure
@@ -74,7 +92,11 @@ exposure
 
 ## rebalance
 
-Get rebalance suggestions.
+Portfolio rebalance analysis and suggestions.
+
+**Description:** Analyzes current portfolio allocation and provides rebalancing suggestions to improve diversification and risk distribution.
+
+**Syntax:**
 
 ```bash
 rebalance

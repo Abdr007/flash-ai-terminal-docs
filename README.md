@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="public/favicon.svg" width="64" height="64" alt="Flash AI Terminal" />
+  <img src="./public/favicon.svg" width="64" height="64" alt="Flash Terminal" />
 </p>
 
-<h1 align="center">Flash AI Terminal — Documentation</h1>
+<h1 align="center">Flash Terminal — Documentation</h1>
 
 <p align="center">
-  <strong>Official documentation for the Flash AI Terminal (FAT) CLI trading tool.</strong>
+  <strong>Official documentation for the Flash Terminal (FT) CLI trading tool.</strong>
 </p>
 
 <p align="center">
-  <a href="https://flash-ai-terminal-docs.vercel.app">Live Site</a> &nbsp;·&nbsp;
-  <a href="https://github.com/Abdr007/flash-ai-terminal">Main Repository</a> &nbsp;·&nbsp;
+  <a href="https://flash-terminal-docs.vercel.app">Live Site</a> &nbsp;·&nbsp;
+  <a href="https://github.com/Abdr007/flash-terminal">Main Repository</a> &nbsp;·&nbsp;
   <a href="https://www.flash.trade">Flash Trade</a>
 </p>
 
@@ -18,7 +18,7 @@
 
 ## Overview
 
-Documentation site for [Flash AI Terminal](https://github.com/Abdr007/flash-ai-terminal) — a professional CLI trading terminal for the Flash Trade perpetuals protocol on Solana.
+Documentation site for [Flash Terminal](https://github.com/Abdr007/flash-terminal) — a professional CLI trading terminal for the Flash Trade perpetuals protocol on Solana.
 
 Built with [VitePress](https://vitepress.dev), styled to match the Flash Trade ecosystem.
 
@@ -49,7 +49,7 @@ npm run preview
 
 The site is deployed on [Vercel](https://vercel.com). Every push to `main` triggers a new deployment.
 
-**Live:** [flash-ai-terminal-docs.vercel.app](https://flash-ai-terminal-docs.vercel.app)
+**Live:** [flash-terminal-docs.vercel.app](https://flash-terminal-docs.vercel.app)
 
 ## Tech Stack
 
@@ -59,4 +59,4 @@ The site is deployed on [Vercel](https://vercel.com). Every push to `main` trigg
 
 ## License
 
-MIT — Part of the [Flash AI Terminal](https://github.com/Abdr007/flash-ai-terminal) project.
+MIT — Part of the [Flash Terminal](https://github.com/Abdr007/flash-terminal) project.

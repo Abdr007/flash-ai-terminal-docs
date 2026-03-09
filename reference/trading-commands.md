@@ -4,6 +4,8 @@
 
 Open a leveraged perpetual position.
 
+**Description:** Opens a new long or short perpetual position on the specified market with the given leverage and collateral amount.
+
 **Syntax:**
 
 ```
@@ -14,17 +16,15 @@ open <leverage>x <long|short> <market> $<collateral>
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `leverage` | number | Leverage multiplier (1-100x, market-dependent) |
+| `leverage` | number | Leverage multiplier (1-100x) |
 | `long\|short` | string | Position direction |
 | `market` | string | Market symbol (e.g., SOL, BTC, ETH) |
-| `collateral` | number | Collateral amount in USD (min $10) |
+| `collateral` | number | Collateral amount in USD ($10 minimum) |
 
-**Examples:**
+**Example:**
 
 ```bash
-open 2x long SOL $10
-open 5x short ETH $200
-open 10x long BTC $1000
+open 5x long SOL $500
 ```
 
 ---
@@ -33,19 +33,18 @@ open 10x long BTC $1000
 
 Close an existing position.
 
+**Description:** Closes an open position on the specified market and side. Realizes PnL and returns collateral minus fees.
+
 **Syntax:**
 
 ```
 close <market> <long|short>
-close <market>              # auto-detects side if only one position
 ```
 
-**Examples:**
+**Example:**
 
 ```bash
 close SOL long
-close ETH short
-close SOL                   # auto-detect
 ```
 
 ---
@@ -54,17 +53,18 @@ close SOL                   # auto-detect
 
 Add collateral to an existing position.
 
+**Description:** Increases the collateral on an open position, reducing leverage and moving the liquidation price further away.
+
 **Syntax:**
 
 ```
 add $<amount> to <market> <long|short>
 ```
 
-**Examples:**
+**Example:**
 
 ```bash
-add $100 to SOL long
-add $50 to BTC short
+add $200 to SOL long
 ```
 
 ---
@@ -73,17 +73,18 @@ add $50 to BTC short
 
 Remove collateral from an existing position.
 
+**Description:** Decreases the collateral on an open position, increasing leverage and moving the liquidation price closer.
+
 **Syntax:**
 
 ```
 remove $<amount> from <market> <long|short>
 ```
 
-**Examples:**
+**Example:**
 
 ```bash
-remove $100 from SOL long
-remove $50 from BTC short
+remove $100 from ETH long
 ```
 
 ---
@@ -92,23 +93,31 @@ remove $50 from BTC short
 
 Display all open positions.
 
-```bash
+**Description:** Shows a table of all open positions with detailed metrics.
+
+**Syntax:**
+
+```
 positions
 ```
 
-Output columns: Market, Side, Leverage, Size, Collateral, Entry, Mark, PnL, Fees, Liquidation.
+Output columns: Market, Side, Leverage, Size, Collateral, Entry, Mark, PnL, Fees, Liquidation Price.
 
 ---
 
 ## trade history
 
-View trade journal.
+View recent trades.
 
-```bash
+**Description:** Displays the trade journal with recent trade activity including timestamps, actions, markets, sizes, entry prices, and realized PnL.
+
+**Syntax:**
+
+```
 trade history
 ```
 
-Aliases: `trades`, `journal`, `history`
+**Aliases:** `trades`, `journal`, `history`
 
 ---
 
@@ -116,9 +125,16 @@ Aliases: `trades`, `journal`, `history`
 
 Preview any trade command without signing.
 
-```bash
-dryrun open 5x long SOL $100
-dryrun close ETH short
+**Description:** Compiles and simulates the transaction on-chain without broadcasting. Shows entry price, liquidation price, fees, and compute units. No wallet signature is required.
+
+**Syntax:**
+
+```
+dryrun <trade command>
 ```
 
-Compiles and simulates the transaction on-chain. Shows entry price, liquidation price, fees, and compute units.
+**Example:**
+
+```bash
+dryrun open 2x long SOL $10
+```

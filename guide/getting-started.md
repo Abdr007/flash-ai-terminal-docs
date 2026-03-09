@@ -4,7 +4,7 @@
 
 | Requirement | Version |
 |-------------|---------|
-| Node.js | 18+ |
+| Node.js | 20+ |
 | npm | 8+ |
 | Solana RPC | Any mainnet endpoint |
 
@@ -12,12 +12,13 @@
 
 - [Helius RPC](https://helius.dev/) for improved reliability and failover
 - Anthropic API key for LLM-powered natural language parsing
+- Groq API key as an alternative LLM provider
 
 ## Install
 
 ```bash
-git clone https://github.com/Abdr007/flash-ai-terminal.git
-cd flash-ai-terminal
+git clone https://github.com/Abdr007/flash-terminal.git
+cd flash-terminal
 npm install
 npm run build
 ```
@@ -35,18 +36,21 @@ npm link
 flash
 ```
 
-FAT starts in **simulation mode** by default. No wallet or RPC configuration is required to explore.
+::: tip MODE SELECTION
+Flash Terminal prompts users to select Simulation or Live mode on startup. Simulation mode is recommended for first-time users — it uses real oracle prices but never signs transactions.
+:::
 
 ## First Session
 
 ```bash
-flash [sim] > help               # list all commands
-flash [sim] > markets            # view 24 supported markets
-flash [sim] > monitor            # live market prices
-flash [sim] > open 2x long SOL $100
-flash [sim] > positions          # view open positions
-flash [sim] > close SOL long
-flash [sim] > exit
+flash                           # start the terminal (select mode)
+flash > help                    # list all commands
+flash > markets                 # view supported markets
+flash > monitor                 # live market prices
+flash > open 2x long SOL $100  # open a position
+flash > positions               # view open positions
+flash > close SOL long          # close the position
+flash > exit                    # clean shutdown
 ```
 
 ## Configuration
@@ -72,7 +76,7 @@ cp .env.example .env
 |----------|---------|---------|
 | `MAX_COLLATERAL_PER_TRADE` | Per-trade collateral cap (USD) | Unlimited |
 | `MAX_POSITION_SIZE` | Max position size (USD) | Unlimited |
-| `MAX_LEVERAGE` | Maximum leverage multiplier | Market default |
+| `MAX_LEVERAGE` | Maximum leverage multiplier | 100 |
 | `MAX_TRADES_PER_MINUTE` | Rate limit | 10 |
 | `MIN_DELAY_BETWEEN_TRADES_MS` | Min delay between trades | 3000 |
 
@@ -92,21 +96,7 @@ cp .env.example .env
 
 See `.env.example` for all available options.
 
-## Enabling Live Trading
-
-1. Set `SIMULATION_MODE=false` in `.env`
-2. Configure a reliable RPC endpoint (Helius recommended)
-3. Import a wallet:
-   ```bash
-   wallet import main ~/wallets/my-keypair.json
-   ```
-4. Start the terminal
-
-::: warning REAL FUNDS AT RISK
-Live trading executes real on-chain transactions. Start with small positions and always verify transactions on [Solscan](https://solscan.io).
-:::
-
-## Logs
+## Log Files
 
 Runtime logs are stored at `~/.flash/logs/`:
 

@@ -1,58 +1,34 @@
 # Introduction
 
-**Flash AI Terminal** (FAT) is a professional command-line trading terminal for interacting with the [Flash Trade](https://www.flash.trade/) perpetual futures protocol on Solana.
+**Flash Terminal** (FT) is a professional command-line trading terminal for the Flash Trade perpetual futures protocol on Solana. It provides deterministic trade execution, protocol inspection, market observability, and portfolio risk management — directly from the terminal using live on-chain data.
 
-It enables traders and developers to execute leveraged trades, inspect protocol state, analyze markets, and monitor portfolio risk — directly from the terminal using real on-chain data.
+## Why Flash Terminal Exists
 
-## Why FAT Exists
+Trading on DeFi protocols typically requires a browser, wallet extension, and web UI. Flash Terminal provides direct command-line access to Flash Trade — the same way professional trading desks operate through terminal interfaces.
 
-Trading on DeFi protocols typically requires a browser, a wallet extension, and a web UI. Flash AI Terminal removes that dependency.
-
-It gives developers and traders direct command-line access to Flash Trade — the same way professional trading desks operate through terminal interfaces.
-
-FAT is built for people who:
+FT is built for people who:
 
 - Prefer working in the terminal
 - Want programmatic access to protocol state
-- Need a lightweight tool that runs anywhere Node.js runs
+- Need lightweight tooling that runs anywhere Node.js runs
 
-## Design Philosophy
+## Design Principles
 
-FAT stands for **Fast, Auditable, Trading** — three principles that define every design decision in the system.
+Three principles define every design decision in the system.
 
-### Fast
+### Deterministic
 
-- Cached market data with bounded TTLs
-- Instant trade preview using cached oracle prices
-- Static site documentation builds in under 2 seconds
-- Commands execute in under 200ms typical
+Trade commands are parsed with structured regex patterns. The same input always produces the same action. No AI inference is applied on trade execution paths.
 
 ### Auditable
 
-- Every trade attempt logged to `~/.flash/signing-audit.log`
-- State reconciliation verifies on-chain positions
-- All data comes from verifiable sources (Pyth, Flash SDK, fstats)
-- No fabricated data — empty results on source failure
+Every trade attempt is logged to the signing audit log. State reconciliation verifies on-chain positions match local state. All data comes from verifiable sources — never fabricated or synthetic.
 
-### Trading
+### Observable
 
-- Deterministic command parsing for trade execution
-- Multi-stage confirmation pipeline before signing
-- Simulation mode for strategy validation
-- Real-time risk monitoring with liquidation alerts
+Liquidation clusters, funding rates, liquidity depth, and protocol health metrics are all computed from live protocol data. Every number displayed in the terminal traces back to an on-chain or oracle source.
 
-## How FAT Connects to Flash Trade
-
-The terminal connects directly to the Flash Trade program on Solana mainnet using the Flash SDK.
-
-```
-FAT CLI
-  │
-  ├── Flash SDK ──── Flash Trade Program (on-chain)
-  ├── Pyth Network ── Oracle price feeds
-  ├── Solana RPC ──── Transaction submission
-  └── fstats API ──── Protocol analytics
-```
+## Data Sources
 
 | Source | Data |
 |--------|------|
@@ -64,20 +40,20 @@ FAT CLI
 
 ## Operating Modes
 
-FAT operates in two modes, locked at startup:
+Flash Terminal prompts users to select Simulation or Live mode when starting the CLI. The selected mode is locked for the entire session — no mid-session switching is possible.
 
 | Mode | Wallet | Transactions | Risk |
 |------|--------|-------------|------|
 | **Simulation** | Not required | Never signed | None |
 | **Live** | Required | Signed and broadcast | Real funds |
 
-Mode cannot change mid-session. This prevents accidental transitions from paper trading to live execution.
+Simulation mode is recommended for testing trades safely. It uses real oracle prices and validates strategies without committing capital.
 
 ## Quick Demo
 
 ```bash
-flash                           # start the terminal
-markets                         # list all 24 supported markets
+flash                           # start the terminal (select mode)
+markets                         # list all supported markets
 inspect protocol                # protocol-wide statistics
 dryrun open 2x long SOL $10    # simulate a trade
 open 2x long SOL $10           # execute the trade
@@ -88,6 +64,6 @@ exit                            # clean shutdown
 
 ## Next Steps
 
-- [Installation](/guide/getting-started) — Set up and run FAT
+- [Installation](/guide/getting-started) — Set up and run FT
 - [Architecture](/guide/architecture) — Understand the system design
 - [Trading Commands](/guide/trading-commands) — Start trading

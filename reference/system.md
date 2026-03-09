@@ -4,11 +4,15 @@
 
 Show system health information.
 
+**Description:** Displays build version, RPC provider, latency, wallet connection state, simulation/live mode, and session uptime.
+
+**Syntax:**
+
 ```bash
 system status
 ```
 
-Shows: build version, RPC provider, latency, wallet state, simulation mode, and session uptime.
+**Aliases:** `system`
 
 ---
 
@@ -16,11 +20,13 @@ Shows: build version, RPC provider, latency, wallet state, simulation mode, and 
 
 Show RPC endpoint health and latency.
 
+**Description:** Displays per-endpoint details including URL, latency, failure rate, slot lag, and active/inactive status.
+
+**Syntax:**
+
 ```bash
 rpc status
 ```
-
-Shows per-endpoint: URL, latency, failure rate, slot lag, and active/inactive status.
 
 ---
 
@@ -28,11 +34,13 @@ Shows per-endpoint: URL, latency, failure rate, slot lag, and active/inactive st
 
 Run a full RPC diagnostic with scoring.
 
+**Description:** Tests connectivity, latency, slot freshness, and transaction simulation across all configured endpoints. Produces a health score.
+
+**Syntax:**
+
 ```bash
 rpc test
 ```
-
-Tests: connectivity, latency, slot freshness, and transaction simulation. Provides a health score.
 
 ---
 
@@ -40,11 +48,19 @@ Tests: connectivity, latency, slot freshness, and transaction simulation. Provid
 
 Inspect a transaction on-chain.
 
+**Description:** Fetches and displays transaction details, program logs, and confirmation status for a given signature.
+
+**Syntax:**
+
 ```bash
 tx inspect <signature>
 ```
 
-Shows transaction details, program logs, and status.
+**Example:**
+
+```bash
+tx inspect 5K7x...abc
+```
 
 ---
 
@@ -52,13 +68,30 @@ Shows transaction details, program logs, and status.
 
 Run a full system diagnostic.
 
+**Description:** Checks RPC connectivity, wallet state, build integrity, and all subsystem health. Reports issues and suggested fixes.
+
+**Syntax:**
+
 ```bash
 doctor
 ```
 
-Alias: `flash doctor`
+**Aliases:** `flash doctor`
 
-Checks: RPC connectivity, wallet state, build integrity, and subsystem health.
+---
+
+## degen
+
+Toggle degen mode.
+
+**Description:** Enables or disables degen mode, which unlocks 500x leverage on SOL, BTC, and ETH markets.
+
+**Syntax:**
+
+```bash
+degen on
+degen off
+```
 
 ---
 
@@ -66,9 +99,15 @@ Checks: RPC connectivity, wallet state, build integrity, and subsystem health.
 
 List all available commands.
 
+**Description:** Displays every available command with a brief description.
+
+**Syntax:**
+
 ```bash
 help
 ```
+
+**Aliases:** `commands`, `?`
 
 ---
 
@@ -76,8 +115,12 @@ help
 
 Clean shutdown.
 
+**Description:** Gracefully stops all subsystems in order: status bar, risk monitor, reconciler, plugins, and RPC manager. Returns to the shell.
+
+**Syntax:**
+
 ```bash
 exit
 ```
 
-Stops all subsystems in order: status bar, risk monitor, reconciler, plugins, RPC manager. Returns to the shell.
+**Aliases:** `quit`

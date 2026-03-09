@@ -1,15 +1,15 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: 'FAT Docs',
-  titleTemplate: ':title — Flash AI Terminal',
-  description: 'Professional CLI trading terminal for the Flash Trade protocol on Solana.',
+  title: 'FT Docs',
+  titleTemplate: ':title — Flash Terminal',
+  description: 'Deterministic protocol trading terminal for Flash Trade on Solana.',
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['meta', { name: 'theme-color', content: '#26d97f' }],
-    ['meta', { name: 'og:title', content: 'Flash AI Terminal — FAT Docs' }],
-    ['meta', { name: 'og:description', content: 'Professional CLI trading terminal for the Flash Trade protocol on Solana.' }],
+    ['meta', { name: 'og:title', content: 'Flash Terminal — Documentation' }],
+    ['meta', { name: 'og:description', content: 'Deterministic protocol trading terminal for Flash Trade on Solana.' }],
     ['meta', { name: 'og:type', content: 'website' }],
   ],
 
@@ -26,7 +26,7 @@ export default defineConfig({
 
   themeConfig: {
     logo: '/logo.svg',
-    siteTitle: 'FAT Docs',
+    siteTitle: 'Flash Terminal',
 
     nav: [
       { text: 'Guide', link: '/guide/introduction', activeMatch: '/guide/' },
@@ -41,7 +41,7 @@ export default defineConfig({
       },
       {
         text: 'GitHub',
-        link: 'https://github.com/Abdr007/flash-ai-terminal',
+        link: 'https://github.com/Abdr007/flash-terminal',
       },
     ],
 
@@ -100,7 +100,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Abdr007/flash-ai-terminal' },
+      { icon: 'github', link: 'https://github.com/Abdr007/flash-terminal' },
     ],
 
     search: {
@@ -111,16 +111,11 @@ export default defineConfig({
     },
 
     footer: {
-      message: 'FAT — Fast \u2022 Auditable \u2022 Trading',
-      copyright: 'MIT License \u2022 Built for the Flash Trade ecosystem',
+      message: 'FT — Deterministic Protocol Trading Terminal',
+      copyright: 'MIT License • Built for the Flash Trade ecosystem',
     },
 
-    editLink: {
-      pattern: 'https://github.com/Abdr007/flash-ai-terminal/edit/main/docs-site/:path',
-      text: 'Edit this page on GitHub',
-    },
-
-    outline: {
+outline: {
       level: [2, 3],
       label: 'On this page',
     },

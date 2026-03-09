@@ -2,7 +2,9 @@
 
 The terminal provides direct access to Flash protocol state through a set of inspection commands.
 
-## Inspect Protocol
+## Commands
+
+### inspect protocol
 
 View protocol-wide statistics.
 
@@ -19,7 +21,7 @@ Shows:
 - Protocol fees collected
 - Long/short ratio
 
-## Inspect Pool
+### inspect pool \<name\>
 
 Deep-dive into a specific pool.
 
@@ -32,22 +34,10 @@ Shows:
 - Pool address
 - Supported markets
 - Open interest per market
-- Largest positions
+- Whale positions
 - Pool utilization
 
-Available pools:
-
-| Pool | Assets |
-|------|--------|
-| Crypto.1 | SOL, BTC, ETH, ZEC, BNB |
-| Virtual.1 | XAG, XAU, CRUDEOIL, EUR, GBP, USDJPY, USDCNH |
-| Governance.1 | JTO, JUP, PYTH, RAY, HYPE, MET, KMNO |
-| Community.1 | PUMP, BONK, PENGU |
-| Community.2 | WIF |
-| Trump.1 | FARTCOIN |
-| Ore.1 | ORE |
-
-## Inspect Market
+### inspect market \<asset\>
 
 Deep-dive into a specific market.
 
@@ -63,22 +53,35 @@ Shows:
 - Largest open positions
 - Risk metrics
 
-## Data Sources
+## Available Pools
 
-Protocol inspection data comes from:
+| Pool | Assets |
+|------|--------|
+| Crypto.1 | SOL, BTC, ETH, ZEC, BNB |
+| Virtual.1 | XAG, XAU, CRUDEOIL, EUR, GBP, USDJPY, USDCNH |
+| Governance.1 | JTO, JUP, PYTH, RAY, HYPE, MET, KMNO |
+| Community.1 | PUMP, BONK, PENGU |
+| Community.2 | WIF |
+| Trump.1 | FARTCOIN |
+| Ore.1 | ORE |
+| Meme.1 | MOODENG |
+
+## Data Sources
 
 | Data | Source |
 |------|--------|
-| Pool configuration | Flash SDK (on-chain) |
+| Pool configuration | Flash SDK (on-chain config) |
 | Open interest | fstats API |
 | Protocol statistics | fstats API |
 | Whale positions | fstats API |
 
-Data is cached for 15 seconds. If the API is unavailable, stale cached data is returned as a fallback.
+## Cache Behavior
+
+Data is cached for 15 seconds. If the fstats API is unavailable, stale cached data is returned as a fallback. This ensures inspection commands remain responsive even during API outages.
 
 ## Use Cases
 
-- **Before trading:** Check OI skew to understand market positioning
-- **Risk assessment:** Identify crowded trades via long/short ratio
-- **Market research:** Find markets with high activity or unusual whale positioning
-- **Protocol monitoring:** Track protocol-wide volume and fee generation
+- **Check OI skew** -- Understand market positioning before entering a trade
+- **Risk assessment** -- Identify crowded trades via long/short ratio
+- **Market research** -- Find markets with high activity or unusual whale positioning
+- **Protocol monitoring** -- Track protocol-wide volume and fee generation

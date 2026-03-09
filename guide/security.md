@@ -1,16 +1,13 @@
 # Security & Safety
 
-FAT implements defense-in-depth for trading operations. Every trade passes through multiple safety layers before reaching the blockchain.
+FT implements defense-in-depth for trading operations. Every trade passes through multiple safety layers before reaching the blockchain.
 
-## Why Deterministic Execution Matters
+## Deterministic Execution
 
-In trading infrastructure, ambiguity is risk. If a user types `open 5x long SOL $100`, the system must execute exactly that trade — not a different interpretation of the same words.
+FT uses structured regex parsing for all trade commands. The AI interpreter handles natural language queries (e.g., "how is SOL doing?") but is never involved in trade execution.
 
-FAT uses structured regex parsing for all trade commands. The AI interpreter is used only for natural language queries (e.g., "how is SOL doing?"), never for trade execution.
-
-This means:
 - Same input always produces the same action
-- No model hallucination can alter trade parameters
+- No model inference can alter trade parameters
 - Execution is auditable and reproducible
 
 ## Transaction Confirmation
@@ -35,14 +32,10 @@ CONFIRM TRANSACTION
     Risk:         HIGH
     Exposure:     $0.00 → $500.00
 
-  ! High leverage (5x) — liquidation risk is significant
-
-  This will execute a REAL on-chain transaction.
-
 Type "yes" to sign or "no" to cancel
 ```
 
-In live mode, the header is displayed in red and the real-transaction warning is prominent. The user must explicitly type `yes` to proceed.
+The user must explicitly type `yes` to proceed.
 
 ## Signing Guard
 
@@ -52,38 +45,36 @@ The signing guard enforces configurable limits on all trades:
 |-------|---------------------|---------|
 | Max collateral per trade | `MAX_COLLATERAL_PER_TRADE` | Unlimited |
 | Max position size | `MAX_POSITION_SIZE` | Unlimited |
-| Max leverage | `MAX_LEVERAGE` | Market default |
+| Max leverage | `MAX_LEVERAGE` | 100x |
 | Max trades per minute | `MAX_TRADES_PER_MINUTE` | 10 |
 | Min delay between trades | `MIN_DELAY_BETWEEN_TRADES_MS` | 3000ms |
 
-Trades exceeding limits are rejected before reaching the confirmation step.
+Trades exceeding these limits are rejected before reaching the confirmation step.
 
 ## Signing Audit Log
 
 Every trade attempt is recorded in `~/.flash/signing-audit.log`:
 
 ```
-[2026-03-09T12:00:00Z] open SOL long 5x $100 → confirmed
-[2026-03-09T12:01:00Z] close SOL long → rejected (rate_limited)
-[2026-03-09T12:02:00Z] open ETH short 10x $500 → failed (insufficient_balance)
+[2026-03-09T12:00:00Z] open SOL long 5x $100 wallet:ABDR → confirmed
+[2026-03-09T12:01:00Z] close SOL long wallet:ABDR → rejected (rate_limited)
+[2026-03-09T12:02:00Z] open ETH short 10x $500 wallet:ABDR → failed (insufficient_balance)
 ```
 
-Fields: timestamp, action, market, side, amounts, wallet address, result. Private keys are never logged.
+Fields logged: timestamp, action, market, side, leverage, amounts, wallet address, result. Private keys are never logged.
 
-## Simulation Guard
+## Mode Lock
 
-Simulation mode is determined at startup and locked for the session:
+Flash Terminal prompts users to select Simulation or Live mode at startup. The selected mode is locked for the entire session. There is no command or API to switch modes mid-session.
 
-| Setting | Behavior |
-|---------|----------|
-| `SIMULATION_MODE=true` | Paper trading only. No transactions signed. |
-| `SIMULATION_MODE=false` | Live trading enabled. Real on-chain execution. |
-
-There is no command or API to switch modes during a session.
+| Mode | Behavior |
+|------|----------|
+| Simulation | Paper trading only. No transactions signed. |
+| Live | Real on-chain execution. Transactions signed and broadcast. |
 
 ## RPC Health Validation
 
-Before live trades, the terminal checks RPC health:
+Before live trades, the terminal validates RPC health:
 
 - Latency must be below 3 seconds
 - Slot lag must be below 50
@@ -93,44 +84,63 @@ If health is degraded, a warning is displayed before proceeding.
 
 ## Position Verification
 
-Before close, add-collateral, and remove-collateral operations:
-
-1. Query current positions from the blockchain
-2. Verify the target position exists
-3. If missing, retry via the reconciliation engine
-4. Display current position details (size, entry, PnL, liquidation) in the confirmation
+Before close, add-collateral, and remove-collateral operations, the terminal queries the blockchain to verify the target position exists. If missing, the reconciliation engine retries before reporting an error.
 
 ## Wallet Security
 
 | Protection | Implementation |
 |------------|---------------|
-| File permissions | Keypair files stored with `0600` (owner-only) |
+| File permissions | Keypair files stored with `0600` (owner-only read/write) |
 | Key logging | Private keys never written to logs or console |
 | Import security | Terminal input hidden during wallet import |
 | Path validation | File paths restricted to home directory, symlinks resolved |
-| API key scrubbing | `sk-ant-***`, `gsk_***` in all log output |
+| API key scrubbing | Keys masked in all log output (`sk-ant-***`, `gsk_***`, `api_key=***`) |
 
 ## Pre-Send Simulation
 
-On the first transaction attempt, FAT simulates the transaction using Solana's runtime before broadcasting:
+On the first transaction attempt, FT simulates the transaction using Solana's runtime before broadcasting:
 
-- Catches program errors (invalid instruction, insufficient balance)
+- Catches program errors (invalid instruction, insufficient balance) before spending fees
 - Reports compute unit usage
-- Prevents wasted transaction fees on known failures
+- Program errors abort immediately; network errors trigger retry with failover
 
-Program errors abort immediately. Network errors trigger retry with failover.
+## Safety Layers
 
-## Summary
+Every trade passes through the following layers in order:
 
-| Layer | Protection |
-|-------|-----------|
-| Regex parsing | Deterministic intent extraction |
-| Zod validation | Parameter type and range enforcement |
-| Trade limits | Configurable caps on size, leverage, collateral |
-| Rate limiter | Prevents rapid-fire submissions |
-| Confirmation gate | Full summary with risk preview |
-| Signing audit | Complete trade attempt history |
-| Pre-send simulation | Catch errors before broadcast |
-| RPC health check | Verify endpoint before signing |
-| Position verification | Confirm target exists before modify |
-| State reconciliation | Post-trade on-chain verification |
+```
+Input
+  │
+  ▼
+Regex Parsing ─── deterministic intent extraction
+  │
+  ▼
+Zod Validation ─── parameter type and range enforcement
+  │
+  ▼
+Trade Limits ─── configurable caps on size, leverage, collateral
+  │
+  ▼
+Rate Limiter ─── prevents rapid-fire submissions
+  │
+  ▼
+Confirmation Gate ─── full summary with risk preview
+  │
+  ▼
+Signing Audit ─── trade attempt recorded to disk
+  │
+  ▼
+Pre-Send Simulation ─── catch errors before broadcast
+  │
+  ▼
+RPC Health Check ─── verify endpoint before signing
+  │
+  ▼
+Position Verification ─── confirm target exists before modify
+  │
+  ▼
+State Reconciliation ─── post-trade on-chain verification
+  │
+  ▼
+Blockchain
+```

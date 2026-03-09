@@ -1,13 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   FAT Docs — Design System
-   Flash AI Terminal Documentation
-   Dark trading terminal theme — matching Flash Trade aesthetic
+   FT Docs — Design System
+   Flash Terminal Documentation
+   Dark terminal theme for protocol infrastructure documentation
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ─── Color Tokens ────────────────────────────────────────────────────────── */
 
 :root {
-  /* Brand — Flash Trade green */
+  /* Brand — Amber/Gold */
   --vp-c-brand-1: #26d97f;
   --vp-c-brand-2: #3ae68c;
   --vp-c-brand-3: #5aebb0;
@@ -20,21 +20,21 @@
   --vp-button-brand-text: #0a0e14;
 
   /* Alt button */
-  --vp-button-alt-bg: #f0f4f2;
-  --vp-button-alt-hover-bg: #e2eae6;
-  --vp-button-alt-text: #1a2332;
+  --vp-button-alt-bg: #f1f5f9;
+  --vp-button-alt-hover-bg: #e2e8f0;
+  --vp-button-alt-text: #1e293b;
 
-  /* Hero gradient — matches Flash Trade logo gradient */
+  /* Hero gradient */
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: linear-gradient(135deg, #26d97f 0%, #3ae6a0 40%, #c8e64a 100%);
-  --vp-home-hero-image-background-image: linear-gradient(135deg, rgba(38, 217, 127, 0.10) 0%, rgba(200, 230, 74, 0.04) 100%);
+  --vp-home-hero-name-background: linear-gradient(135deg, #26d97f 0%, #3ae68c 50%, #c8e64a 100%);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, rgba(38, 217, 127, 0.08) 0%, rgba(200, 230, 74, 0.04) 100%);
   --vp-home-hero-image-filter: blur(68px);
 
   /* Light mode surfaces */
   --vp-c-bg: #ffffff;
-  --vp-c-bg-soft: #f6f8f7;
-  --vp-c-bg-alt: #eef2f0;
-  --vp-sidebar-bg-color: #f6f8f7;
+  --vp-c-bg-soft: #f8fafc;
+  --vp-c-bg-alt: #f1f5f9;
+  --vp-sidebar-bg-color: #f8fafc;
 
   /* Typography */
   --vp-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -56,28 +56,28 @@
   --vp-button-brand-active-bg: #1fc370;
   --vp-button-brand-text: #0a0e14;
 
-  --vp-button-alt-bg: #161b24;
-  --vp-button-alt-hover-bg: #1c2230;
-  --vp-button-alt-text: #c4ccd8;
+  --vp-button-alt-bg: #1e293b;
+  --vp-button-alt-hover-bg: #293548;
+  --vp-button-alt-text: #cbd5e1;
 
-  /* Dark trading terminal backgrounds */
-  --vp-c-bg: #0b0e14;
-  --vp-c-bg-soft: #111620;
-  --vp-c-bg-alt: #0e1219;
-  --vp-sidebar-bg-color: #0a0d13;
+  /* Dark terminal backgrounds — Slate */
+  --vp-c-bg: #0f172a;
+  --vp-c-bg-soft: #1e293b;
+  --vp-c-bg-alt: #162032;
+  --vp-sidebar-bg-color: #0c1222;
 
-  /* Text — soft, easy on eyes */
-  --vp-c-text-1: #d4dae3;
-  --vp-c-text-2: #8892a2;
-  --vp-c-text-3: #5c6578;
+  /* Text */
+  --vp-c-text-1: #e2e8f0;
+  --vp-c-text-2: #94a3b8;
+  --vp-c-text-3: #64748b;
 
-  /* Borders — subtle navy */
-  --vp-c-divider: #1a2030;
-  --vp-c-gutter: #131825;
+  /* Borders */
+  --vp-c-divider: #1e293b;
+  --vp-c-gutter: #162032;
 
   --vp-home-hero-image-background-image: linear-gradient(135deg, rgba(38, 217, 127, 0.05) 0%, rgba(200, 230, 74, 0.02) 100%);
 
-  --vp-c-text-code: #26d97f;
+  --vp-c-text-code: #3ae68c;
 }
 
 /* ─── Global ──────────────────────────────────────────────────────────────── */
@@ -137,8 +137,8 @@ html {
 }
 
 .dark .vp-doc div[class*='language-'] {
-  background: #0e1219;
-  border-color: #1a2030;
+  background: #162032;
+  border-color: #1e293b;
 }
 
 .vp-doc :not(pre) > code {
@@ -172,7 +172,7 @@ html {
 }
 
 .dark .vp-doc th {
-  background: #111620;
+  background: #1e293b;
 }
 
 .vp-doc td {
@@ -236,20 +236,20 @@ html {
   color: var(--vp-c-text-2);
 }
 
-/* FAT brand tag */
+/* FT brand tag */
 .VPHero .tagline::before {
-  content: 'FAT \2014  Fast \2022  Auditable \2022  Trading';
+  content: 'FT \2014  Deterministic Protocol Trading Terminal';
   display: block;
   font-family: var(--vp-font-family-mono);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #26d97f;
   margin-bottom: 0.75rem;
   padding: 0.35rem 0.75rem;
   background: rgba(38, 217, 127, 0.06);
-  border: 1px solid rgba(38, 217, 127, 0.12);
+  border: 1px solid rgba(38, 217, 127, 0.15);
   border-radius: 6px;
   width: fit-content;
 }
@@ -265,17 +265,17 @@ html {
 
 .VPFeatures .VPFeature:hover {
   border-color: rgba(38, 217, 127, 0.4);
-  box-shadow: 0 4px 20px rgba(38, 217, 127, 0.06);
+  box-shadow: 0 4px 20px rgba(38, 217, 127, 0.08);
   transform: translateY(-3px);
 }
 
 .dark .VPFeatures .VPFeature {
-  background: #111620;
-  border-color: #1a2030;
+  background: #1e293b;
+  border-color: #2d3a4f;
 }
 
 .dark .VPFeatures .VPFeature:hover {
-  border-color: rgba(38, 217, 127, 0.35);
+  border-color: rgba(38, 217, 127, 0.4);
   box-shadow: 0 4px 30px rgba(38, 217, 127, 0.06);
 }
 
@@ -306,7 +306,7 @@ html {
 }
 
 .dark .VPSidebar {
-  border-right-color: #1a2030;
+  border-right-color: #1e293b;
 }
 
 .VPSidebarItem .text {
@@ -339,11 +339,11 @@ html {
 }
 
 .dark .VPNav {
-  border-bottom-color: #1a2030;
+  border-bottom-color: #1e293b;
 }
 
 .dark .VPNavBar {
-  background: rgba(11, 14, 20, 0.88);
+  background: rgba(15, 23, 42, 0.88);
 }
 
 .VPNavBar .title {
@@ -375,8 +375,8 @@ html {
 }
 
 .dark .VPFooter {
-  border-top-color: #1a2030;
-  background: #0a0d13;
+  border-top-color: #1e293b;
+  background: #0c1222;
 }
 
 .VPFooter .message {
@@ -401,8 +401,8 @@ html {
 /* ─── Search ──────────────────────────────────────────────────────────────── */
 
 .dark .VPLocalSearchBox .shell {
-  background: #111620;
-  border-color: #1a2030;
+  background: #1e293b;
+  border-color: #2d3a4f;
 }
 
 /* ─── Scrollbar ───────────────────────────────────────────────────────────── */
@@ -417,12 +417,12 @@ html {
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #1a2030;
+  background: #1e293b;
   border-radius: 3px;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #252d40;
+  background: #334155;
 }
 
 /* ─── Responsive ──────────────────────────────────────────────────────────── */
@@ -460,6 +460,6 @@ html {
   }
 
   .VPHero .tagline::before {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 }
