@@ -114,20 +114,31 @@ trade history
 
 In simulation mode, shows all executed trades with entry/exit prices, PnL, and fees. In live mode, provides links to Solscan for on-chain verification.
 
+## Fee Structure
+
+Every trade incurs an open fee and a close fee, calculated as a percentage of position size (not collateral). Fee rates are read from `CustodyAccount` on-chain data per market. Typical rates are ~0.08% (8 bps).
+
+```
+Open Fee  = Position Size × Open Fee Rate
+Close Fee = Position Size × Close Fee Rate
+```
+
+While a position is open, **borrow fees** accrue continuously in `unsettledFeesUsd`. Flash Trade does not use periodic funding rates like centralized exchanges.
+
+See [Protocol Alignment](/guide/protocol-alignment) for details on how fee rates are extracted from on-chain data.
+
 ## Supported Markets
 
 | Pool | Markets |
-|------|---------|
-| Crypto.1 | SOL, BTC, ETH |
-| Virtual.1 | VIRTUAL |
-| Governance.1 | JTO, JUP, KMNO, RAY, MET, PENGU, HYPE, TRUMP |
-| Community.1 | WIF, BONK, POPCAT, PNUT, AI16Z, FARTCOIN, VINE |
-| Community.2 | PUMP, XRP, DOGE, SUI |
+|:-----|:--------|
+| Crypto.1 | SOL, BTC, ETH, and others |
+| Virtual.1 | XAG, XAU, CRUDEOIL, EUR, GBP, and others |
+| Governance.1 | JTO, JUP, PYTH, RAY, HYPE, MET, KMNO |
+| Community.1 | Various community tokens |
+| Community.2 | Various community tokens |
 | Trump.1 | TRUMP, MELANIA |
 | Ore.1 | ORE |
 
-View all available markets with:
-
-```bash
-markets
-```
+::: tip Dynamic Discovery
+Markets are loaded dynamically from the Flash SDK `PoolConfig`. Run `markets` to see the current list.
+:::

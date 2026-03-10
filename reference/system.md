@@ -64,6 +64,26 @@ tx inspect 5K7x...abc
 
 ---
 
+## tx debug
+
+Debug a transaction with protocol context.
+
+**Description:** Fetches transaction details and provides protocol-level context including program errors, instruction breakdown, and Flash Trade error code mapping.
+
+**Syntax:**
+
+```bash
+tx debug <signature>
+```
+
+**Example:**
+
+```bash
+tx debug 5K7x...abc
+```
+
+---
+
 ## doctor
 
 Run a full system diagnostic.

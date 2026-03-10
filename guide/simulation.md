@@ -9,7 +9,7 @@ When Simulation mode is selected at startup, the terminal uses a paper trading e
 - **Virtual USDC balance** -- Positions are tracked in memory with a virtual balance
 - **Real-time oracle prices** -- Prices come from live Pyth oracle data
 - **Mark-to-market PnL** -- Positions are valued against current oracle prices
-- **0.08% fee model** -- Fees are simulated to match Flash Trade's fee structure
+- **Protocol-approximated fees** -- Open/close fees use 0.08% (8 bps) of position size, approximating typical Flash Trade `CustodyAccount` fee rates. Live mode reads exact rates from on-chain data.
 - **No transaction signing** -- No transactions are signed or broadcast to the blockchain
 
 ## Starting the Terminal
@@ -66,7 +66,7 @@ DRY-RUN RESULTS
 | Transactions signed | No | Yes |
 | Funds at risk | No | Yes |
 | Oracle prices | Real (Pyth) | Real (Pyth) |
-| Fee model | 0.08% simulated | Actual protocol fee |
+| Fee model | 0.08% approximation | On-chain `CustodyAccount` rates |
 | Position tracking | In-memory | On-chain |
 | Risk preview | Yes | Yes |
 

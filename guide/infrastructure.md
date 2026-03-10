@@ -1,6 +1,6 @@
 # RPC Reliability
 
-FT is designed for real-world RPC conditions where endpoints fail, latency spikes, and nodes fall behind the network tip.
+Flash Terminal is designed for real-world RPC conditions where endpoints fail, latency spikes, and nodes fall behind the network tip.
 
 ## Multi-Endpoint Failover
 
@@ -34,7 +34,7 @@ The same RPC connection is used for an entire transaction lifecycle (build, sign
 
 ## Slot Lag Detection
 
-FT tracks the latest slot from each endpoint and computes relative lag:
+Flash Terminal tracks the latest slot from each endpoint and computes relative lag:
 
 ```
 Endpoint A: slot 285,432,100  (active)
@@ -88,8 +88,8 @@ The reconciliation engine ensures CLI state matches blockchain state.
 1. Fetch authoritative positions from blockchain
 2. Validate numeric integrity (reject NaN/Infinity/zero)
 3. Compare with locally tracked positions
-4. If mismatch detected, retry after delay
-5. If mismatch persists across consecutive cycles, accept blockchain state
+4. If mismatch detected, retry after one cycle delay
+5. If mismatch persists across 2 consecutive cycles, accept blockchain state as authoritative
 6. Log all events to `~/.flash/logs/reconcile.log`
 
 ## Background Health Monitoring

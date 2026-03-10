@@ -20,7 +20,7 @@ portfolio
 
 Comprehensive trading dashboard.
 
-**Description:** Combines portfolio summary, open positions, market overview, risk level, largest position, funding rates, and realized PnL into a single view.
+**Description:** Combines portfolio summary, open positions, market overview, risk level, largest position, borrow fees, and realized PnL into a single view.
 
 **Syntax:**
 

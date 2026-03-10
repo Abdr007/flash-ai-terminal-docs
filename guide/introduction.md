@@ -1,53 +1,52 @@
 # Introduction
 
-**Flash Terminal** (FT) is a professional command-line trading terminal for the Flash Trade perpetual futures protocol on Solana. It provides deterministic trade execution, protocol inspection, market observability, and portfolio risk management — directly from the terminal using live on-chain data.
+**Flash Terminal** is a deterministic command line interface for the [Flash Trade](https://www.flash.trade/) perpetual futures protocol on Solana.
 
-## Why Flash Terminal Exists
+It provides a transparent, protocol-aligned trading terminal where every calculation — fees, leverage, liquidation prices, margins — is derived from on-chain state or official SDK helpers.
 
-Trading on DeFi protocols typically requires a browser, wallet extension, and web UI. Flash Terminal provides direct command-line access to Flash Trade — the same way professional trading desks operate through terminal interfaces.
+## What Flash Terminal Does
 
-FT is built for people who:
+- Execute leveraged trades on Flash Trade (open, close, add/remove collateral)
+- Inspect protocol state (pools, markets, fees, open interest)
+- Monitor positions with real-time risk alerts
+- Analyze markets using live data from Pyth Hermes and fstats
+- Verify protocol alignment with built-in audit tools
 
-- Prefer working in the terminal
-- Want programmatic access to protocol state
-- Need lightweight tooling that runs anywhere Node.js runs
+## What Flash Terminal Does Not Do
+
+- Generate trading signals or predictions
+- Fabricate analytics or synthetic data
+- Reimplement protocol logic when an SDK helper exists
+- Modify or extend protocol behavior
 
 ## Design Principles
 
-Three principles define every design decision in the system.
+**Deterministic** — Trade commands are parsed with structured regex. Same input, same action.
 
-### Deterministic
+**Protocol-aligned** — Fee rates from `CustodyAccount`, liquidation prices from `getLiquidationPriceContractHelper()`, leverage from `PoolConfig`.
 
-Trade commands are parsed with structured regex patterns. The same input always produces the same action. No AI inference is applied on trade execution paths.
+**Observable** — All protocol state is queryable from the CLI. Nothing is hidden.
 
-### Auditable
-
-Every trade attempt is logged to the signing audit log. State reconciliation verifies on-chain positions match local state. All data comes from verifiable sources — never fabricated or synthetic.
-
-### Observable
-
-Liquidation clusters, funding rates, liquidity depth, and protocol health metrics are all computed from live protocol data. Every number displayed in the terminal traces back to an on-chain or oracle source.
+**Auditable** — Every trade attempt is logged. State reconciliation verifies positions on-chain.
 
 ## Data Sources
 
-| Source | Data |
-|--------|------|
-| Flash SDK | Position state, pool config, instruction building |
-| Pyth Network | Real-time oracle prices |
-| Solana RPC | Transaction submission and confirmation |
-| fstats API | Volume, open interest, leaderboards, whale activity |
-| CoinGecko | Market prices with 24h change |
+| Source | Data | Usage |
+|:-------|:-----|:------|
+| Flash SDK | Positions, pool config, liquidation math, leverage limits | Trade execution, position queries |
+| Pyth Hermes | Oracle prices (same feeds as Flash protocol on-chain) | Mark prices, PnL calculations |
+| CustodyAccount | Fee rates, max leverage, maintenance margin | Fee calculation, risk preview |
+| Solana RPC | Transaction broadcast, wallet balances, on-chain state | Trade execution, balance queries |
+| fstats API | Open interest, volume, leaderboards, whale positions | Market analytics |
 
 ## Operating Modes
 
-Flash Terminal prompts users to select Simulation or Live mode when starting the CLI. The selected mode is locked for the entire session — no mid-session switching is possible.
+| Mode | Description |
+|:-----|:------------|
+| **Simulation** | Paper trading with real oracle prices. No transactions signed. |
+| **Live** | Real transactions on Solana mainnet. Requires connected wallet. |
 
-| Mode | Wallet | Transactions | Risk |
-|------|--------|-------------|------|
-| **Simulation** | Not required | Never signed | None |
-| **Live** | Required | Signed and broadcast | Real funds |
-
-Simulation mode is recommended for testing trades safely. It uses real oracle prices and validates strategies without committing capital.
+Mode is selected at startup and locked for the session.
 
 ## Quick Demo
 
@@ -55,7 +54,8 @@ Simulation mode is recommended for testing trades safely. It uses real oracle pr
 flash                           # start the terminal (select mode)
 markets                         # list all supported markets
 inspect protocol                # protocol-wide statistics
-dryrun open 2x long SOL $10    # simulate a trade
+protocol verify                 # run protocol alignment audit
+dryrun open 2x long SOL $10    # preview a trade
 open 2x long SOL $10           # execute the trade
 positions                       # view open positions
 close SOL long                  # close the position
@@ -64,6 +64,7 @@ exit                            # clean shutdown
 
 ## Next Steps
 
-- [Installation](/guide/getting-started) — Set up and run FT
+- [Installation](/guide/getting-started) — Set up Flash Terminal
 - [Architecture](/guide/architecture) — Understand the system design
-- [Trading Commands](/guide/trading-commands) — Start trading
+- [Trading Guide](/guide/trading-commands) — Learn trading commands
+- [Protocol Alignment](/guide/protocol-alignment) — How the CLI mirrors the protocol

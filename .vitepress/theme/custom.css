@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   FT Docs — Design System
+   Flash Terminal — Design System
    Flash Terminal Documentation
    Dark terminal theme for protocol infrastructure documentation
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -238,7 +238,7 @@ html {
 
 /* FT brand tag */
 .VPHero .tagline::before {
-  content: 'FT \2014  Deterministic Protocol Trading Terminal';
+  content: 'Flash Terminal \2014  Deterministic CLI Trading Interface';
   display: block;
   font-family: var(--vp-font-family-mono);
   font-size: 0.75rem;

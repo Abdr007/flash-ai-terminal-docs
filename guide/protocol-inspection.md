@@ -55,16 +55,19 @@ Shows:
 
 ## Available Pools
 
-| Pool | Assets |
-|------|--------|
-| Crypto.1 | SOL, BTC, ETH, ZEC, BNB |
-| Virtual.1 | XAG, XAU, CRUDEOIL, EUR, GBP, USDJPY, USDCNH |
+| Pool | Markets |
+|:-----|:--------|
+| Crypto.1 | SOL, BTC, ETH, and others |
+| Virtual.1 | XAG, XAU, CRUDEOIL, EUR, GBP, and others |
 | Governance.1 | JTO, JUP, PYTH, RAY, HYPE, MET, KMNO |
-| Community.1 | PUMP, BONK, PENGU |
-| Community.2 | WIF |
-| Trump.1 | FARTCOIN |
+| Community.1 | Various community tokens |
+| Community.2 | Various community tokens |
+| Trump.1 | TRUMP, MELANIA |
 | Ore.1 | ORE |
-| Meme.1 | MOODENG |
+
+::: tip Dynamic Discovery
+Markets are loaded dynamically from the Flash SDK `PoolConfig`. The list above may not reflect the latest additions. Run `markets` to see the current list for your SDK version.
+:::
 
 ## Data Sources
 

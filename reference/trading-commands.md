@@ -101,7 +101,40 @@ Display all open positions.
 positions
 ```
 
-Output columns: Market, Side, Leverage, Size, Collateral, Entry, Mark, PnL, Fees, Liquidation Price.
+**Output columns:**
+
+| Column | Description |
+|:-------|:------------|
+| Market | Asset being traded (SOL, BTC, ETH, etc.) |
+| Side | Long or Short |
+| Leverage | Current leverage multiplier |
+| Size | Position notional value (collateral × leverage) |
+| Collateral | Margin posted |
+| Entry | Average fill price at open |
+| Mark | Current Pyth oracle price |
+| PnL | Unrealized profit/loss |
+| Fees | Accumulated fees (open fee + borrow fees) |
+| Liq | Liquidation price |
+
+---
+
+## position debug
+
+Protocol-level position debug information.
+
+**Description:** Shows detailed on-chain position data for a specific market, including raw account fields, CustodyAccount parameters, and SDK liquidation price comparison.
+
+**Syntax:**
+
+```bash
+position debug <market>
+```
+
+**Example:**
+
+```bash
+position debug SOL
+```
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## System Overview
 
-FT follows a layered architecture where each component has a single responsibility. User input flows through parsing, validation, and safety checks before reaching the blockchain.
+Flash Terminal follows a layered architecture where each component has a single responsibility. User input flows through parsing, validation, and safety checks before reaching the blockchain.
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -69,8 +69,10 @@ Computes position size, estimates fees, and builds the trade parameters:
 
 ```
 Position Size = Collateral × Leverage
-Estimated Fee = Position Size × 0.08%
+Estimated Fee = Position Size × Fee Rate
 ```
+
+Fee rates are read from `CustodyAccount` on-chain data for each market. In simulation mode, the fee rate defaults to 0.08% (8 bps) to approximate typical protocol rates.
 
 ### Stage 4 — Simulation Guard
 
@@ -138,7 +140,7 @@ The reconciler also runs every 60 seconds in the background.
 
 ## Dual Client Architecture
 
-FT uses an `IFlashClient` interface that abstracts the underlying implementation:
+Flash Terminal uses an `IFlashClient` interface that abstracts the underlying implementation:
 
 | Client | Mode | Transactions | State |
 |--------|------|-------------|-------|

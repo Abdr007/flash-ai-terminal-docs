@@ -152,9 +152,9 @@ liquidations SOL
 
 ## funding
 
-Funding rate and projected accumulation.
+OI imbalance and borrow/lock fee data.
 
-**Description:** Shows the current funding rate with projected 1h, 4h, and 24h accumulation. Detects OI imbalance between longs and shorts.
+**Description:** Shows OI imbalance between longs and shorts and borrow/lock fee data. Flash Trade uses borrow/lock fees that accrue continuously, not periodic funding rates like centralized exchanges.
 
 **Syntax:**
 
