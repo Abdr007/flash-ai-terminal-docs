@@ -187,9 +187,9 @@ dryrun open 2x long SOL $10
 
 ## set tp/sl
 
-Set take-profit or stop-loss targets on an open position.
+Set take-profit or stop-loss targets on an open position (on-chain).
 
-**Description:** Attaches automated price targets to an existing position. When the valuation price reaches the target, the position is closed automatically using the existing trading pipeline.
+**Description:** Places an on-chain trigger order via the Flash SDK's `placeTriggerOrder`. When the protocol detects the price condition is met, the position is closed automatically. Orders are visible on flash.trade and persist after terminal shutdown.
 
 **Syntax:**
 
@@ -213,17 +213,19 @@ set tp $95 for SOL long
 set sl $80 for SOL long
 ```
 
-**Safety features:**
+**On-chain features:**
 
-- **Spike protection:** Requires 2 consecutive price ticks before triggering (prevents false execution from oracle spikes)
-- **Pre-trigger validation:** Circuit breaker and kill switch are checked before every execution
-- **Duplicate prevention:** A triggered target cannot fire again
+- Orders are placed on the Flash Trade protocol
+- Visible on [flash.trade](https://www.flash.trade/)
+- Persist after terminal shutdown
+- Execute via protocol logic (no local monitoring)
+- Requires live mode with a connected wallet
 
 ---
 
 ## remove tp/sl
 
-Remove a take-profit or stop-loss target from a position.
+Cancel an on-chain take-profit or stop-loss trigger order.
 
 **Syntax:**
 
@@ -243,7 +245,7 @@ remove sl BTC short
 
 ## tp status
 
-Display all active TP/SL targets.
+Display all active on-chain TP/SL targets.
 
 **Syntax:**
 
@@ -257,9 +259,9 @@ tp status
 
 ## limit
 
-Place a limit order that triggers when price reaches a specified level.
+Place an on-chain limit order via the Flash SDK.
 
-**Description:** Creates a session-scoped limit order. When the valuation price hits the target, the existing open-position pipeline is called automatically. Limit orders exist only for the current terminal session and are not written to disk.
+**Description:** Creates an on-chain limit order using `placeLimitOrder`. When the protocol detects the price condition is met, the position is opened automatically. Orders are visible on flash.trade and persist after terminal shutdown.
 
 **Trigger logic:**
 
@@ -291,13 +293,13 @@ limit order sol 2x for 10 dollars long at 82
 | `collateral` | number | Collateral amount in USD |
 | `price` | number | Trigger price |
 
-**Safety features:**
+**On-chain features:**
 
-- **Spike protection:** Requires 2 consecutive price ticks before triggering
-- **Pre-trigger validation:** Circuit breaker and kill switch checked before execution
-- **Execution failure recovery:** If the trade fails, the order resets and can retry
-- **Session-scoped:** Orders are cleared on terminal restart
-- **Capacity limit:** Maximum 50 active orders
+- Orders are placed on the Flash Trade protocol
+- Visible on [flash.trade](https://www.flash.trade/)
+- Persist after terminal shutdown
+- Execute via protocol logic (no local monitoring)
+- Requires live mode with a connected wallet
 
 The parser accepts flexible phrasing — `@` or `at`, `$` or bare numbers, `dollars`, `for`/`with` prefixes, and any word order.
 
@@ -305,7 +307,7 @@ The parser accepts flexible phrasing — `@` or `at`, `$` or bare numbers, `doll
 
 ## orders
 
-Display all active limit orders.
+Display all active on-chain orders (limit orders and TP/SL).
 
 **Syntax:**
 
@@ -315,22 +317,13 @@ orders
 
 **Aliases:** `order list`, `limit orders`
 
-**Output columns:**
-
-| Column | Description |
-|:-------|:------------|
-| ID | Order identifier (order-1, order-2, ...) |
-| Market | Target market |
-| Side | Long or Short |
-| Lev | Leverage multiplier |
-| Collateral | Collateral amount |
-| Limit Price | Trigger price |
+Shows all on-chain orders grouped by type: limit orders, take-profit, and stop-loss.
 
 ---
 
 ## cancel order
 
-Cancel an active limit order.
+Cancel an on-chain limit order.
 
 **Syntax:**
 
@@ -341,5 +334,24 @@ cancel order <id>
 **Example:**
 
 ```bash
-cancel order order-1
+cancel order 0
+cancel order 1
+```
+
+---
+
+## edit limit
+
+Edit the price of an existing on-chain limit order.
+
+**Syntax:**
+
+```
+edit limit <id> $<price>
+```
+
+**Example:**
+
+```bash
+edit limit 0 $85
 ```

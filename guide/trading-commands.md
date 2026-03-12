@@ -132,7 +132,7 @@ See [Protocol Alignment](/guide/protocol-alignment) for details on how fee rates
 
 ## Take-Profit / Stop-Loss
 
-Flash Terminal can automatically close positions when price targets are hit.
+Flash Terminal places TP/SL orders directly on-chain via the Flash Trade protocol. Orders are visible on the Flash Trade website, persist after terminal shutdown, and execute via protocol logic.
 
 ### Setting Targets
 
@@ -149,25 +149,30 @@ Or inline when opening:
 open 2x long SOL $100 tp $95 sl $80
 ```
 
-Both approaches produce identical targets in the TP/SL engine.
+Both approaches place identical on-chain trigger orders via `placeTriggerOrder`.
 
 ### Managing Targets
 
 ```bash
-tp status              # View all active targets
-remove tp SOL long     # Remove take-profit
-remove sl SOL long     # Remove stop-loss
+tp status              # View all active on-chain targets
+remove tp SOL long     # Cancel take-profit on-chain
+remove sl SOL long     # Cancel stop-loss on-chain
 ```
 
-### Safety
+### On-Chain Execution
 
-- **Spike protection:** Requires 2 consecutive price ticks before triggering, preventing false execution from oracle spikes
-- **Pre-trigger checks:** Circuit breaker and kill switch are verified before every close
-- **Valuation price:** Uses the same Pyth oracle price used for PnL, liquidation, and risk calculations
+- Orders are placed on the Flash Trade protocol using the Flash SDK
+- The protocol executes trigger orders when price conditions are met
+- Orders survive terminal shutdown — they live on-chain
+- Orders are visible on [flash.trade](https://www.flash.trade/)
+
+::: info
+TP/SL requires live mode with a connected wallet. Simulation mode does not support on-chain orders.
+:::
 
 ## Limit Orders
 
-Limit orders let you queue a position that opens automatically when price reaches a target level.
+Limit orders are placed on-chain via the Flash Trade protocol. When price reaches the target level, the protocol executes the order automatically.
 
 ### Placing a Limit Order
 
@@ -189,21 +194,27 @@ limit sol long 2x $100 at $82
 - **Long orders** trigger when price drops to or below the limit price
 - **Short orders** trigger when price rises to or above the limit price
 
-When triggered, the order calls the same `open` pipeline used by manual trades — including signing guard, circuit breaker, and confirmation flow.
+Orders are placed on-chain using `placeLimitOrder` from the Flash SDK. The protocol handles execution — no local monitoring required.
 
 ### Managing Orders
 
 ```bash
-orders                 # View all active limit orders
-cancel order order-1   # Cancel a specific order
+orders                 # View all active on-chain orders
+cancel order 0         # Cancel a specific limit order
+edit limit 0 $85       # Edit a limit order price
 ```
 
-### Session Scope
+### On-Chain Persistence
 
-Limit orders exist only for the current terminal session. Restarting the terminal clears all orders. They are never written to disk.
+Limit orders are stored on-chain and:
 
-::: warning
-Limit orders require the terminal to remain running. If you close the terminal, all pending limit orders are lost.
+- Survive terminal shutdown
+- Are visible on [flash.trade](https://www.flash.trade/)
+- Execute via protocol logic when price conditions are met
+- Can be managed from both the terminal and the Flash Trade website
+
+::: info
+Limit orders require live mode with a connected wallet. Simulation mode does not support on-chain orders.
 :::
 
 ## Supported Markets
