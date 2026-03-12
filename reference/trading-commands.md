@@ -21,11 +21,22 @@ open <leverage>x <long|short> <market> $<collateral>
 | `market` | string | Market symbol (e.g., SOL, BTC, ETH) |
 | `collateral` | number | Collateral amount in USD ($10 minimum) |
 
-**Example:**
+**Examples:**
 
 ```bash
 open 5x long SOL $500
+open 2x long SOL $100 tp $95 sl $80
+open 3x short BTC $200 sl $73000
 ```
+
+**Inline TP/SL:** You can attach take-profit and/or stop-loss targets directly to the open command. These are set automatically after the position is confirmed. See [TP/SL](#set-tp-sl) for details.
+
+| Suffix | Description |
+|--------|-------------|
+| `tp $<price>` | Set take-profit target (optional) |
+| `sl $<price>` | Set stop-loss target (optional) |
+
+Order of `tp` and `sl` is flexible. Both are optional.
 
 ---
 
@@ -170,4 +181,165 @@ dryrun <trade command>
 
 ```bash
 dryrun open 2x long SOL $10
+```
+
+---
+
+## set tp/sl
+
+Set take-profit or stop-loss targets on an open position.
+
+**Description:** Attaches automated price targets to an existing position. When the valuation price reaches the target, the position is closed automatically using the existing trading pipeline.
+
+**Syntax:**
+
+```
+set tp <market> <long|short> $<price>
+set sl <market> <long|short> $<price>
+```
+
+**Examples:**
+
+```bash
+set tp SOL long $95
+set sl SOL long $80
+set tp BTC short $60000
+```
+
+**Alternate syntax:**
+
+```bash
+set tp $95 for SOL long
+set sl $80 for SOL long
+```
+
+**Safety features:**
+
+- **Spike protection:** Requires 2 consecutive price ticks before triggering (prevents false execution from oracle spikes)
+- **Pre-trigger validation:** Circuit breaker and kill switch are checked before every execution
+- **Duplicate prevention:** A triggered target cannot fire again
+
+---
+
+## remove tp/sl
+
+Remove a take-profit or stop-loss target from a position.
+
+**Syntax:**
+
+```
+remove tp <market> <long|short>
+remove sl <market> <long|short>
+```
+
+**Example:**
+
+```bash
+remove tp SOL long
+remove sl BTC short
+```
+
+---
+
+## tp status
+
+Display all active TP/SL targets.
+
+**Syntax:**
+
+```
+tp status
+```
+
+**Aliases:** `tpsl status`, `tpsl`
+
+---
+
+## limit
+
+Place a limit order that triggers when price reaches a specified level.
+
+**Description:** Creates a session-scoped limit order. When the valuation price hits the target, the existing open-position pipeline is called automatically. Limit orders exist only for the current terminal session and are not written to disk.
+
+**Trigger logic:**
+
+- **Long:** Triggers when price drops to or below the limit price (buy the dip)
+- **Short:** Triggers when price rises to or above the limit price (sell the rally)
+
+**Syntax:**
+
+```
+limit <long|short> <market> <leverage>x $<collateral> @ $<price>
+```
+
+**Examples:**
+
+```bash
+limit long SOL 2x $100 @ $82
+limit short BTC 3x $200 @ $72000
+limit long ETH 5x $500 at $1800
+limit order sol 2x for 10 dollars long at 82
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `long\|short` | string | Position direction |
+| `market` | string | Market symbol |
+| `leverage` | number | Leverage multiplier (1-100x) |
+| `collateral` | number | Collateral amount in USD |
+| `price` | number | Trigger price |
+
+**Safety features:**
+
+- **Spike protection:** Requires 2 consecutive price ticks before triggering
+- **Pre-trigger validation:** Circuit breaker and kill switch checked before execution
+- **Execution failure recovery:** If the trade fails, the order resets and can retry
+- **Session-scoped:** Orders are cleared on terminal restart
+- **Capacity limit:** Maximum 50 active orders
+
+The parser accepts flexible phrasing — `@` or `at`, `$` or bare numbers, `dollars`, `for`/`with` prefixes, and any word order.
+
+---
+
+## orders
+
+Display all active limit orders.
+
+**Syntax:**
+
+```
+orders
+```
+
+**Aliases:** `order list`, `limit orders`
+
+**Output columns:**
+
+| Column | Description |
+|:-------|:------------|
+| ID | Order identifier (order-1, order-2, ...) |
+| Market | Target market |
+| Side | Long or Short |
+| Lev | Leverage multiplier |
+| Collateral | Collateral amount |
+| Limit Price | Trigger price |
+
+---
+
+## cancel order
+
+Cancel an active limit order.
+
+**Syntax:**
+
+```
+cancel order <id>
+```
+
+**Example:**
+
+```bash
+cancel order order-1
 ```

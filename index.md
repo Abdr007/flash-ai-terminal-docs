@@ -118,7 +118,8 @@ Flash Terminal integrates multiple safety layers that operate before, during, an
 | **Signing Guard** | Enforces configurable trade limits, rate limiting, and confirmation gates. Logs every trade attempt to an audit file. |
 | **Circuit Breaker** | Halts all trading when cumulative session or daily losses exceed configurable thresholds. Requires manual reset. |
 | **Trading Gate** | Master kill switch that instantly blocks all trade operations. Can be toggled at runtime. |
-| **TP/SL Automation** | Automatically closes positions at predefined take-profit or stop-loss levels with spike protection. |
+| **TP/SL Automation** | Automatically closes positions at predefined take-profit or stop-loss levels with spike protection. Set inline (`open 2x long SOL $100 tp $95 sl $80`) or separately. |
+| **Limit Orders** | Session-scoped limit orders that automatically open positions when price reaches a target level. Spike protection and full safety pipeline. |
 | **Transaction Simulation** | Simulates transactions on-chain before broadcast to catch program errors before funds are at risk. |
 | **Crash Recovery** | Trade journal records pending transactions. On restart, the recovery engine verifies on-chain status and reconciles state. |
 | **RPC Failover** | Monitors endpoint health, detects slot lag, and switches to backup endpoints automatically. |

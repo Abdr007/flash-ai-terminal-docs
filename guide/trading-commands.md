@@ -16,7 +16,10 @@ open <leverage>x <long|short> <asset> $<collateral>
 open 2x long SOL $100
 open 5x short ETH $500
 open 10x long BTC $1000
+open 2x long SOL $100 tp $95 sl $80
 ```
+
+You can attach take-profit and stop-loss targets inline. They are set automatically after the position is confirmed.
 
 The terminal displays a confirmation panel before execution:
 
@@ -126,6 +129,82 @@ Close Fee = Position Size × Close Fee Rate
 While a position is open, **borrow fees** accrue continuously in `unsettledFeesUsd`. Flash Trade does not use periodic funding rates like centralized exchanges.
 
 See [Protocol Alignment](/guide/protocol-alignment) for details on how fee rates are extracted from on-chain data.
+
+## Take-Profit / Stop-Loss
+
+Flash Terminal can automatically close positions when price targets are hit.
+
+### Setting Targets
+
+Set targets on an existing position:
+
+```bash
+set tp SOL long $95
+set sl SOL long $80
+```
+
+Or inline when opening:
+
+```bash
+open 2x long SOL $100 tp $95 sl $80
+```
+
+Both approaches produce identical targets in the TP/SL engine.
+
+### Managing Targets
+
+```bash
+tp status              # View all active targets
+remove tp SOL long     # Remove take-profit
+remove sl SOL long     # Remove stop-loss
+```
+
+### Safety
+
+- **Spike protection:** Requires 2 consecutive price ticks before triggering, preventing false execution from oracle spikes
+- **Pre-trigger checks:** Circuit breaker and kill switch are verified before every close
+- **Valuation price:** Uses the same Pyth oracle price used for PnL, liquidation, and risk calculations
+
+## Limit Orders
+
+Limit orders let you queue a position that opens automatically when price reaches a target level.
+
+### Placing a Limit Order
+
+```bash
+limit long SOL 2x $100 @ $82
+limit short BTC 3x $200 at $72000
+```
+
+The parser is flexible — these all work:
+
+```bash
+limit long sol 2x $100 @ $82
+limit order sol 2x for 10 dollars long at 82
+limit sol long 2x $100 at $82
+```
+
+### How It Works
+
+- **Long orders** trigger when price drops to or below the limit price
+- **Short orders** trigger when price rises to or above the limit price
+
+When triggered, the order calls the same `open` pipeline used by manual trades — including signing guard, circuit breaker, and confirmation flow.
+
+### Managing Orders
+
+```bash
+orders                 # View all active limit orders
+cancel order order-1   # Cancel a specific order
+```
+
+### Session Scope
+
+Limit orders exist only for the current terminal session. Restarting the terminal clears all orders. They are never written to disk.
+
+::: warning
+Limit orders require the terminal to remain running. If you close the terminal, all pending limit orders are lost.
+:::
 
 ## Supported Markets
 
