@@ -1,126 +1,156 @@
-# Installation
+# Quick Start
 
-## Requirements
+Goal: execute your first trade in under 5 minutes.
 
-| Requirement | Version |
-|:------------|:--------|
-| Node.js | 20+ |
-| npm | 8+ |
-| Solana RPC | Any mainnet endpoint |
+## Prerequisites
 
-**Optional:**
+| Requirement | Minimum | Notes |
+|:------------|:--------|:------|
+| **Node.js** | v20+ | LTS recommended. Check with `node --version`. |
+| **Solana RPC** | Any mainnet endpoint | [Helius](https://helius.dev/) or [Triton](https://triton.one/) recommended for reliability. Public RPC works but has rate limits. |
+| **Solana keypair** | Ed25519 JSON file | Only required for live trading. Simulation mode needs no keypair. |
 
-- [Helius RPC](https://helius.dev/) for improved reliability and multi-endpoint failover
-- Anthropic API key for LLM-powered natural language parsing (read-only queries only)
-- Groq API key as an alternative LLM provider
+## Step 1: Install
 
-## Install
+```bash
+npm install -g flash-terminal
+```
+
+Or install from source:
 
 ```bash
 git clone https://github.com/Abdr007/flash-terminal.git
 cd flash-terminal
 npm install
 npm run build
-```
-
-## Run
-
-```bash
-npm start
-```
-
-Or link globally for the `flash` command:
-
-```bash
 npm link
-flash
 ```
 
-::: tip MODE SELECTION
-Flash Terminal prompts you to select Simulation or Live mode on startup. Simulation mode is recommended for first-time users — it uses real Pyth oracle prices but never signs transactions.
-:::
-
-## First Session
+Verify the installation:
 
 ```bash
-flash                           # start the terminal (select mode)
-flash > help                    # list all commands
-flash > markets                 # view supported markets and pools
-flash > monitor                 # live market prices (full-screen)
-flash > analyze SOL             # deep market analysis
-flash > open 2x long SOL $100  # open a position (confirmation required)
-flash > positions               # view open positions with mark-to-market
-flash > risk report             # liquidation distance per position
-flash > portfolio               # balance, exposure, PnL summary
-flash > close SOL long          # close the position
-flash > trade history           # view trade journal
-flash > protocol verify         # verify protocol alignment
-flash > exit                    # clean shutdown
+flash --version
 ```
 
-## Configuration
-
-Copy the example environment file:
+## Step 2: Configure
 
 ```bash
 cp .env.example .env
 ```
 
-### Core Settings
+Open `.env` and set the following:
 
-| Variable | Purpose | Default |
-|:---------|:--------|:--------|
-| `RPC_URL` | Primary Solana RPC endpoint | Public RPC |
-| `BACKUP_RPC_1` | First failover endpoint | None |
-| `BACKUP_RPC_2` | Second failover endpoint | None |
-| `SIMULATION_MODE` | Paper trading mode | `true` |
+| Variable | Required | Description |
+|:---------|:---------|:------------|
+| `RPC_URL` | Yes | Your Solana mainnet RPC endpoint. HTTPS required (HTTP allowed only for localhost). |
+| `WALLET_PATH` | For live trading | Absolute path to your Solana keypair JSON file. Supports `~` expansion. |
+| `SIMULATION_MODE` | No | `true` (default) or `false`. Controls whether transactions are signed and broadcast. |
+| `ANTHROPIC_API_KEY` | No | Enables natural language queries ("how is SOL doing?"). Not used for trade execution. |
 
-### Trading Limits
-
-These are enforced by the [signing guard](/guide/security) before any transaction is signed:
-
-| Variable | Purpose | Default |
-|:---------|:--------|:--------|
-| `MAX_COLLATERAL_PER_TRADE` | Per-trade collateral cap (USD) | Unlimited |
-| `MAX_POSITION_SIZE` | Max position size (USD) | Unlimited |
-| `MAX_LEVERAGE` | Maximum leverage multiplier | 100 |
-| `MAX_TRADES_PER_MINUTE` | Rate limit | 10 |
-| `MIN_DELAY_BETWEEN_TRADES_MS` | Min delay between trades | 3000 |
-
-### Performance
-
-| Variable | Purpose | Default |
-|:---------|:--------|:--------|
-| `COMPUTE_UNIT_PRICE` | Priority fee in microLamports | `500000` |
-| `DEFAULT_SLIPPAGE_BPS` | Slippage tolerance in basis points | `50` |
-
-### Protocol
-
-| Variable | Purpose | Default |
-|:---------|:--------|:--------|
-| `FLASH_STRICT_PROTOCOL` | Reject trades when CLI/SDK diverge >0.5% | `false` |
-
-### Optional
-
-| Variable | Purpose |
-|:---------|:--------|
-| `ANTHROPIC_API_KEY` | LLM-powered natural language command parsing |
-| `GROQ_API_KEY` | Alternative LLM provider |
-
-::: warning LLM Usage
-LLM keys are only used for **read-only** natural language queries (e.g., "how is SOL doing?"). Trade commands always use deterministic regex parsing regardless of whether an LLM key is configured.
+::: tip START IN SIMULATION
+Leave `SIMULATION_MODE=true` (the default). Simulation uses real Pyth oracle prices and protocol-accurate fee models but never signs or broadcasts transactions. You do not need a wallet or SOL balance.
 :::
 
-See `.env.example` for all available options.
+## Step 3: Run
 
-## Log Files
+```bash
+flash
+```
 
-Runtime logs are stored at `~/.flash/logs/`:
+The terminal presents a mode selection prompt:
 
-| Log File | Contents | Rotation |
-|:---------|:---------|:---------|
-| `flash.log` | General runtime log | 10MB (keeps `.old` and `.old.2`) |
-| `reconcile.log` | State reconciliation events | 10MB |
-| `signing-audit.log` | Every trade attempt with outcome | Append-only |
+```
+┌─────────────────────────────────────┐
+│  Flash Terminal                     │
+│                                     │
+│  Select mode:                       │
+│  1. Simulation (paper trading)      │
+│  2. Live (real transactions)        │
+│                                     │
+└─────────────────────────────────────┘
+```
 
-All log output is scrubbed — API keys are masked (`sk-ant-***`, `gsk_***`) and private keys are never written.
+Select **Simulation** for your first session. The prompt changes to indicate the active mode:
+
+```
+flash [sim] >
+```
+
+## Step 4: First Trade
+
+**Open a position.** Go 2x long SOL with $100 collateral:
+
+```
+flash [sim] > open 2x long SOL $100
+```
+
+The terminal displays a full trade preview — market, side, leverage, collateral, estimated size, entry price, liquidation price, and fees — before execution.
+
+**View your position:**
+
+```
+flash [sim] > positions
+```
+
+```
+┌─────────┬──────┬─────┬──────────┬────────────┬──────────┬──────────┬─────────┬────────┬───────────┐
+│ Market  │ Side │ Lev │ Size     │ Collateral │ Entry    │ Mark     │ PnL     │ Fees   │ Liq Price │
+├─────────┼──────┼─────┼──────────┼────────────┼──────────┼──────────┼─────────┼────────┼───────────┤
+│ SOL     │ LONG │ 2x  │ $200.00  │ $100.00    │ $142.50  │ $143.10  │ +$0.84  │ $0.16  │ $71.96    │
+└─────────┴──────┴─────┴──────────┴────────────┴──────────┴──────────┴─────────┴────────┴───────────┘
+```
+
+**Check your portfolio:**
+
+```
+flash [sim] > portfolio
+```
+
+**Close the position:**
+
+```
+flash [sim] > close SOL long
+```
+
+**Review trade history:**
+
+```
+flash [sim] > trade history
+```
+
+## Step 5: Going Live
+
+When you are ready to trade with real funds:
+
+**What you need:**
+- A funded Solana wallet (keypair JSON file) with:
+  - **SOL** for transaction fees (~0.005 SOL per trade)
+  - **USDC** for position collateral
+- A reliable RPC endpoint (public RPC will work but may drop transactions under load)
+
+**Switch to live mode:**
+
+Set `SIMULATION_MODE=false` in your `.env` file and restart, or select **Live** at the mode selection prompt.
+
+```
+flash [live] >
+```
+
+::: warning LIVE MODE SAFEGUARDS
+In live mode, every trade requires explicit confirmation before signing. The signing guard displays the full trade summary — market, side, leverage, collateral, size, estimated fees, and wallet address — and waits for your approval. Configure `MAX_COLLATERAL_PER_TRADE` and `MAX_LEVERAGE` in `.env` for additional protection.
+:::
+
+**Verify your connection:**
+
+```
+flash [live] > wallet
+flash [live] > rpc status
+flash [live] > protocol verify
+```
+
+## What's Next
+
+- [Core Concepts](/guide/core-concepts) -- understand markets, leverage, liquidation, and fees
+- [Trading Commands](/guide/trading-commands) -- full command reference for all trade operations
+- [Security Model](/guide/security) -- the 10-layer safety stack protecting your trades
+- [Architecture](/guide/architecture) -- how the execution pipeline works end to end

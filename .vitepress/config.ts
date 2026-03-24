@@ -3,13 +3,13 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Flash Terminal',
   titleTemplate: ':title — Flash Terminal',
-  description: 'Deterministic CLI trading interface for Flash Trade on Solana.',
+  description: 'Deterministic on-chain trading infrastructure for Solana perpetual futures.',
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['meta', { name: 'theme-color', content: '#26d97f' }],
     ['meta', { name: 'og:title', content: 'Flash Terminal — Documentation' }],
-    ['meta', { name: 'og:description', content: 'Deterministic CLI trading interface for Flash Trade on Solana.' }],
+    ['meta', { name: 'og:description', content: 'Deterministic on-chain trading infrastructure for Solana perpetual futures.' }],
     ['meta', { name: 'og:type', content: 'website' }],
   ],
 
@@ -53,17 +53,35 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: 'Introduction', link: '/guide/introduction' },
-            { text: 'Installation', link: '/guide/getting-started' },
-            { text: 'Architecture', link: '/guide/architecture' },
+            { text: 'Quick Start', link: '/guide/getting-started' },
+            { text: 'Core Concepts', link: '/guide/core-concepts' },
           ],
         },
         {
           text: 'Trading',
           collapsed: false,
           items: [
+            { text: 'CLI Guide', link: '/guide/cli-guide' },
             { text: 'Trading Guide', link: '/guide/trading-commands' },
             { text: 'Risk & Liquidation', link: '/guide/risk-preview' },
             { text: 'Simulation Mode', link: '/guide/simulation' },
+          ],
+        },
+        {
+          text: 'Autonomous Agent',
+          collapsed: false,
+          items: [
+            { text: 'Agent System', link: '/guide/autonomous-agent' },
+            { text: 'Strategies', link: '/guide/strategies' },
+          ],
+        },
+        {
+          text: 'Architecture & Safety',
+          collapsed: false,
+          items: [
+            { text: 'Architecture', link: '/guide/architecture' },
+            { text: 'Risk & Safety Systems', link: '/guide/risk-safety' },
+            { text: 'Security Model', link: '/guide/security' },
           ],
         },
         {
@@ -76,19 +94,20 @@ export default defineConfig({
           ],
         },
         {
-          text: 'Analytics & Monitoring',
+          text: 'Infrastructure',
           collapsed: false,
           items: [
+            { text: 'RPC & Networking', link: '/guide/infrastructure' },
             { text: 'Market Analytics', link: '/guide/market-analytics' },
             { text: 'Terminal Features', link: '/guide/terminal-features' },
           ],
         },
         {
-          text: 'Infrastructure',
+          text: 'Advanced',
           collapsed: false,
           items: [
-            { text: 'RPC & Networking', link: '/guide/infrastructure' },
-            { text: 'Security Model', link: '/guide/security' },
+            { text: 'Configuration', link: '/guide/advanced' },
+            { text: 'Troubleshooting', link: '/guide/troubleshooting' },
           ],
         },
       ],
@@ -101,6 +120,9 @@ export default defineConfig({
             { text: 'Market Data', link: '/reference/market-data' },
             { text: 'Portfolio & Risk', link: '/reference/portfolio-risk' },
             { text: 'Protocol', link: '/reference/protocol-inspector' },
+            { text: 'Earn & Liquidity', link: '/reference/earn' },
+            { text: 'FAF Token', link: '/reference/faf' },
+            { text: 'Agent', link: '/reference/agent' },
             { text: 'Wallet', link: '/reference/wallet' },
             { text: 'System', link: '/reference/system' },
           ],
@@ -120,8 +142,8 @@ export default defineConfig({
     },
 
     footer: {
-      message: 'Flash Terminal — Deterministic CLI Trading Interface',
-      copyright: 'MIT License · Built for the Flash Trade protocol',
+      message: 'Flash Terminal — Deterministic On-Chain Trading Infrastructure',
+      copyright: 'MIT License · Built for the Flash Trade protocol on Solana',
     },
 
     outline: {

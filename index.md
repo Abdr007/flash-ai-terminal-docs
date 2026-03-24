@@ -2,170 +2,86 @@
 layout: home
 hero:
   name: Flash Terminal
-  text: Deterministic CLI Trading Interface
-  tagline: Execute leveraged trades on Flash Trade from the command line with deterministic execution, automated risk controls, and real-time monitoring.
+  text: On-Chain Trading Infrastructure
+  tagline: Deterministic execution pipeline for Solana perpetual futures. Protocol-aligned math, 10-layer safety stack, autonomous agent — all from the command line.
   actions:
     - theme: brand
-      text: Get Started
-      link: /guide/introduction
-    - theme: alt
-      text: Command Reference
-      link: /reference/trading-commands
+      text: Quick Start
+      link: /guide/getting-started
     - theme: alt
       text: GitHub
       link: https://github.com/Abdr007/flash-terminal
 
 features:
-  - icon: "\u26A1"
-    title: Protocol-Aligned Trading
-    details: All fees, leverage limits, and liquidation math derived from on-chain CustodyAccount state and Flash SDK helpers.
-    link: /guide/protocol-alignment
-    linkText: Protocol alignment
-  - icon: "\uD83D\uDD12"
+  - icon: "\u2699\uFE0F"
     title: Deterministic Execution
-    details: Every trade passes through validation, simulation, signing guards, and protocol verification before submission.
+    details: Every trade follows a fixed pipeline — Zod schema validation, protocol parameter fetch, transaction simulation, program ID whitelist, signing guard, leader-aware broadcast. Same input, same output, every time.
     link: /guide/architecture
     linkText: Architecture
+  - icon: "\uD83E\uDD16"
+    title: Autonomous Agent
+    details: AI-powered market scanner, portfolio rebalancer, and autopilot. The agent reads live oracle prices and on-chain state — it never fabricates data. Trade commands always use deterministic regex parsing, never LLM output.
+    link: /guide/terminal-features
+    linkText: Agent docs
   - icon: "\uD83D\uDEE1\uFE0F"
-    title: Risk Preview & Liquidation
-    details: Full trade preview with entry price, liquidation distance, fee estimate, and exposure impact before signing.
-    link: /guide/risk-preview
-    linkText: Risk & liquidation
+    title: 10-Layer Safety Stack
+    details: Signing guard, circuit breaker, kill switch, TP/SL automation, transaction simulation, program ID whitelist, rate limiter, crash recovery, state reconciliation, and RPC failover. Defense in depth from intent to confirmation.
+    link: /guide/security
+    linkText: Security model
+  - icon: "\uD83D\uDCE1"
+    title: Protocol-Aligned Data
+    details: Fees, leverage limits, maintenance margins, and liquidation thresholds derived from on-chain CustodyAccount state via Flash SDK helpers. Oracle prices from Pyth Hermes with staleness and confidence validation.
+    link: /guide/protocol-alignment
+    linkText: Protocol alignment
   - icon: "\uD83E\uDDEA"
     title: Simulation Mode
-    details: Paper trade with real Pyth Hermes oracle prices and protocol-accurate fee models. No on-chain transactions.
+    details: Paper trade against real Pyth oracle prices with protocol-accurate fee models. No keypair required, no on-chain transactions. Identical execution logic to live mode — switch with one environment variable.
     link: /guide/simulation
     linkText: Simulation docs
-  - icon: "\uD83D\uDCCA"
-    title: Market Analytics
-    details: Open interest, whale positions, volume data, and protocol health sourced from fstats analytics and on-chain state.
-    link: /guide/market-analytics
-    linkText: Analytics docs
-  - icon: "\uD83D\uDD0D"
-    title: Protocol Inspection
-    details: Query pool state, fee rates, leverage limits, and protocol parameters directly from CustodyAccount and PoolConfig.
-    link: /guide/protocol-inspection
-    linkText: Inspector docs
-  - icon: "\uD83D\uDD04"
-    title: Infrastructure Reliability
-    details: Multi-endpoint RPC failover, slot lag detection, leader-aware routing, crash recovery, and state reconciliation.
+  - icon: "\uD83D\uDD27"
+    title: Production Infrastructure
+    details: Multi-endpoint RPC failover with slot lag detection, transaction rebroadcast with leader-aware routing, 10MB log rotation with secret scrubbing, state reconciliation on startup and after every trade.
     link: /guide/infrastructure
     linkText: Infrastructure docs
 ---
 
-## Why Flash Terminal
+<div class="vp-doc" style="padding: 0 24px;">
 
-Flash Terminal is a production-grade command line interface for the [Flash Trade](https://www.flash.trade/) perpetual futures protocol on Solana. It connects directly to the protocol through the official SDK and provides transparent access to on-chain state.
+## What is Flash Terminal?
 
-**Protocol alignment** is the core design principle. All calculations — fees, leverage limits, maintenance margins, and liquidation thresholds — are derived from on-chain `CustodyAccount` state using Flash SDK helpers. Nothing is approximated or re-implemented. What the terminal displays matches the protocol's execution logic.
+Flash Terminal is a command-line interface for trading perpetual futures on [Flash Trade](https://www.flash.trade/), a Solana-native derivatives protocol. It connects directly to the protocol through the official Flash SDK and exposes on-chain state through a structured, auditable execution pipeline.
 
-**Deterministic execution** ensures every trade follows a predictable pipeline: parameter validation, Zod schema enforcement, transaction simulation, signing guard checks, program ID whitelisting, and leader-aware RPC routing. Transactions behave the same way every time.
+It is not a wrapper around a web UI. It is a trading system — with its own safety stack, execution engine, and observability layer — that uses Flash Trade as its settlement layer.
 
-**Layered safety systems** protect against operational and trading risk. A signing guard enforces rate limits, a circuit breaker halts trading on loss thresholds, and a kill switch provides emergency stop capability. Crash recovery and state reconciliation ensure consistency even after unexpected interruptions.
+### Key Capabilities
 
----
+| Capability | Detail |
+|:-----------|:-------|
+| **Markets** | 32+ assets across 8 pools — crypto, commodities, forex, equities, governance tokens, memecoins |
+| **Execution modes** | Live trading (signed transactions) and simulation (real prices, no signing) |
+| **Autonomous agent** | Market scanner, portfolio analyzer, strategy autopilot with configurable risk parameters |
+| **Earn positions** | Add/remove liquidity to Flash Trade pools directly from the CLI |
+| **Order types** | Market orders, limit orders, FAF (fire-and-forget) orders, TP/SL automation |
+| **Protocol inspection** | Query pool state, fee rates, leverage limits, open interest, and whale positions |
+| **Test coverage** | 1926 assertions across unit, integration, and chaos tests |
 
-## Quick Start
+### Why Flash Terminal
 
-```bash
-git clone https://github.com/Abdr007/flash-terminal.git
-cd flash-terminal
-npm install
-npm run build
-cp .env.example .env
-npm start
-```
+**Transparent.** Every calculation is traceable to an on-chain source. No approximations, no cached-and-forgotten values, no black boxes. When you see a fee estimate, it comes from `CustodyAccount`. When you see a price, it comes from Pyth Hermes with staleness validation.
 
-Once the terminal starts, select a mode and begin trading:
+**Deterministic.** The execution pipeline produces the same result for the same input. Trade commands are parsed with regex, validated with Zod schemas, and executed through a fixed sequence of checks. LLM parsing is only used for read-only natural language queries and never touches the trade path.
 
-```
-flash [sim] > monitor
-flash [sim] > open 2x long SOL $10
-flash [sim] > positions
-flash [sim] > close SOL long
-```
+**Controlled.** Ten independent safety systems operate before, during, and after trade execution. Rate limits, collateral caps, circuit breakers, transaction simulation, program ID whitelisting, and crash recovery all run without manual intervention.
 
-See the [Getting Started guide](/guide/getting-started) for full installation and configuration instructions.
+**Engineer-first.** Configuration lives in environment variables. Logs are structured and scrubbed. Every trade attempt is recorded in an append-only audit log. The system is designed to be operated, debugged, and extended by engineers.
 
----
+### Quick Links
 
-## Architecture
+- [Quick Start](/guide/getting-started) -- first trade in 5 minutes
+- [Core Concepts](/guide/core-concepts) -- markets, positions, leverage, liquidation
+- [Trading Commands](/guide/trading-commands) -- full command reference
+- [Architecture](/guide/architecture) -- system design and execution pipeline
+- [Security Model](/guide/security) -- the complete safety stack
+- [Protocol Alignment](/guide/protocol-alignment) -- how calculations match the protocol
 
-Flash Terminal uses a layered architecture where each component has a single responsibility.
-
-```
-CLI Interface → AI Interpreter → Tool Engine → Flash Client → Solana
-```
-
-**CLI Interface** parses user input into structured intent objects using deterministic regex. An AI-powered natural language parser is available as a fallback when configured.
-
-**Tool Engine** routes validated intents through signing guards, rate limiting, and confirmation gates before execution.
-
-**Flash Client** delegates trade execution to the Flash SDK `PerpetualsClient`. All protocol math — fees, leverage, liquidation — flows through official SDK helpers.
-
-**Solana** is the final execution layer. Transactions are simulated before broadcast, rebroadcast with leader-aware routing, and verified on-chain after confirmation.
-
-Read the full [Architecture guide](/guide/architecture) for details on the trading pipeline.
-
----
-
-## Safety Systems
-
-Flash Terminal integrates multiple safety layers that operate before, during, and after trade execution.
-
-| System | Description |
-|:-------|:------------|
-| **Signing Guard** | Enforces configurable trade limits, rate limiting, and confirmation gates. Logs every trade attempt to an audit file. |
-| **Circuit Breaker** | Halts all trading when cumulative session or daily losses exceed configurable thresholds. Requires manual reset. |
-| **Trading Gate** | Master kill switch that instantly blocks all trade operations. Can be toggled at runtime. |
-| **TP/SL Automation** | Automatically closes positions at predefined take-profit or stop-loss levels with spike protection. Set inline (`open 2x long SOL $100 tp $95 sl $80`) or separately. |
-| **Limit Orders** | Session-scoped limit orders that automatically open positions when price reaches a target level. Spike protection and full safety pipeline. |
-| **Transaction Simulation** | Simulates transactions on-chain before broadcast to catch program errors before funds are at risk. |
-| **Crash Recovery** | Trade journal records pending transactions. On restart, the recovery engine verifies on-chain status and reconciles state. |
-| **RPC Failover** | Monitors endpoint health, detects slot lag, and switches to backup endpoints automatically. |
-
-Read the full [Security Model](/guide/security) for details on the safety pipeline.
-
----
-
-## Data Sources
-
-Flash Terminal retrieves all data from authoritative external sources. No values are fabricated or estimated.
-
-| Source | Data | Validation |
-|:-------|:-----|:-----------|
-| **Pyth Hermes** | Oracle prices | Staleness rejection (<30s), confidence checks (<2%), deviation limits (<50%) |
-| **Flash SDK** | Positions, liquidation math | On-chain `PositionAccount` fetch, `Number.isFinite()` on all fields |
-| **Solana RPC** | Wallet balances, transactions | Direct RPC calls with failover and retry |
-| **fstats API** | Open interest, volume, whales | Response size limits (2MB), parameter sanitization |
-| **CustodyAccount** | Fees, leverage, margins | On-chain state with protocol parameter validation |
-
-Read the full [Data Sources guide](/guide/data-sources) for caching behavior and fallback logic.
-
----
-
-## Navigating the Docs
-
-The documentation is organized into two sections.
-
-**Guide** covers concepts, workflows, and system design:
-
-- [Introduction](/guide/introduction) — what Flash Terminal is and how it works
-- [Installation](/guide/getting-started) — setup, configuration, and first session
-- [Trading Guide](/guide/trading-commands) — opening, closing, and managing positions
-- [Risk & Liquidation](/guide/risk-preview) — trade previews, liquidation math, and risk monitoring
-- [Simulation Mode](/guide/simulation) — paper trading with real oracle prices
-- [Protocol Alignment](/guide/protocol-alignment) — how calculations match the protocol
-- [Market Analytics](/guide/market-analytics) — monitoring and analytics tools
-- [Security Model](/guide/security) — the full safety pipeline
-
-**Reference** provides complete command documentation:
-
-- [Trading Commands](/reference/trading-commands) — open, close, add, remove collateral
-- [Market Data](/reference/market-data) — monitor, scan, analyze, volume, OI
-- [Portfolio & Risk](/reference/portfolio-risk) — dashboard, risk report, exposure
-- [Protocol Inspector](/reference/protocol-inspector) — inspect, verify, fees
-- [Wallet](/reference/wallet) — wallet management and balances
-- [System](/reference/system) — diagnostics, RPC status, health checks
-
-Start with the [Introduction](/guide/introduction) to understand the system, then follow the [Getting Started guide](/guide/getting-started) to install and configure the terminal.
+</div>

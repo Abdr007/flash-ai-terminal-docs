@@ -1,197 +1,182 @@
 # Architecture
 
-## System Overview
+Flash Terminal is 7 isolated layers with strict downward communication. The risk layer sits between every decision and every transaction — no bypass path exists. Market data flows up through caches, execution flows down through safety gates, and the agent's learning loop closes through on-chain state reconciliation.
 
-Flash Terminal is built around a layered architecture. Each layer has a single responsibility. Data flows down through parsing, validation, safety enforcement, and protocol interaction before reaching the blockchain.
+## System Architecture
 
-```
-CLI Interface → Interpreter → Tool Engine → Safety Pipeline → Flash Client → Solana
-```
+```mermaid
+graph TB
+    subgraph INTERFACE["&nbsp; INTERFACE &nbsp;"]
+        CLI["CLI REPL"]
+        NLP["AI Interpreter<br/><sub>regex primary · NLP fallback</sub>"]
+    end
 
-```
-┌─────────────────────────────────────────────────────┐
-│  Layer 1 — Interface                                │
-│  CLI REPL · readline · autocomplete · status bar    │
-└──────────────────────┬──────────────────────────────┘
-                       │ raw input string
-┌──────────────────────▼──────────────────────────────┐
-│  Layer 2 — Interpretation                           │
-│  Regex parser (trades) · NLP fallback (read-only)   │
-│  Zod schema validation · market resolution          │
-└──────────────────────┬──────────────────────────────┘
-                       │ ParsedIntent (typed, validated)
-┌──────────────────────▼──────────────────────────────┐
-│  Layer 3 — Execution                                │
-│  Tool dispatch · flash-tools · agent-tools · plugins│
-└──────────────────────┬──────────────────────────────┘
-                       │ trade parameters
-┌──────────────────────▼──────────────────────────────┐
-│  Layer 4 — Safety Pipeline                          │
-│  Trade limits · rate limiter · confirmation gate     │
-│  Signing audit · program whitelist · instruction     │
-│  freeze · pre-send simulation                        │
-└──────────────────────┬──────────────────────────────┘
-                       │ frozen, validated transaction
-┌──────────────────────▼──────────────────────────────┐
-│  Layer 5 — Protocol                                 │
-│  Flash SDK · Solana RPC · failover · reconciliation │
-└──────────────────────┬──────────────────────────────┘
-                       │
-                  [ Blockchain ]
-```
+    subgraph INTELLIGENCE["&nbsp; INTELLIGENCE &nbsp;"]
+        AGENT["Live Agent<br/><sub>tick loop · adaptive 2–30s</sub>"]
+        SCAN["Scanner<br/><sub>32 markets · parallel</sub>"]
+        STRAT["Signal Fusion<br/><sub>momentum · mean-rev · whale</sub>"]
+        REGIME["Regime Detector<br/><sub>trend · range · vol · compression</sub>"]
+        LEARN["Learning System<br/><sub>Q-tables · edge profiler · EV tracking</sub>"]
+    end
 
-### Layer Boundaries
+    subgraph DECISION["&nbsp; DECISION ENGINE &nbsp;"]
+        SCORE["Opportunity Scorer"]
+        FILTER["Confidence Gate<br/><sub>EV ≥ 0.2 · 2-tick confirm</sub>"]
+        POLICY["Policy Learner<br/><sub>36 states · 4 actions</sub>"]
+    end
 
-| Layer | Input | Output | AI Involved? |
-|:------|:------|:-------|:-------------|
-| Interface | Keystrokes | Raw string | No |
-| Interpretation | Raw string | `ParsedIntent` | Read-only queries only |
-| Execution | `ParsedIntent` | Trade parameters | Analysis tools only |
-| Safety Pipeline | Trade parameters | Frozen transaction | Never |
-| Protocol | Transaction | On-chain state change | Never |
+    subgraph RISK["&nbsp; RISK & SAFETY &nbsp;"]
+        direction LR
+        GUARD["Signing Guard<br/><sub>limits · rate limiter</sub>"]
+        CB["Circuit Breaker<br/><sub>session · daily loss</sub>"]
+        KILL["Kill Switch<br/><sub>master toggle</sub>"]
+        EXPOSURE["Exposure Control<br/><sub>portfolio cap</sub>"]
+    end
 
-Trade commands **never** pass through AI. The regex parser produces a deterministic `ParsedIntent` — same input always produces the same action.
+    subgraph EXECUTION["&nbsp; EXECUTION ENGINE &nbsp;"]
+        ORDER["Order Engine<br/><sub>limit · market · TP/SL</sub>"]
+        TX["TX Builder<br/><sub>cached blockhash · dynamic CU</sub>"]
+        SIM["Pre-flight Simulation<br/><sub>on-chain verify before broadcast</sub>"]
+    end
 
-## Trading Pipeline
+    subgraph DATA["&nbsp; DATA & INFRASTRUCTURE &nbsp;"]
+        direction LR
+        CLIENT["Flash SDK<br/><sub>FlashClient · SimClient</sub>"]
+        RPC["RPC Manager<br/><sub>failover · slot lag · TPU</sub>"]
+        PYTH["Pyth Hermes<br/><sub>oracle feeds · 5s cache</sub>"]
+        CACHE["State Cache<br/><sub>positions · balances · 30s TTL</sub>"]
+    end
 
-Every trade passes through an 11-stage pipeline before reaching the blockchain. Each stage can independently reject the trade.
+    subgraph CHAIN["&nbsp; SOLANA &nbsp;"]
+        FLASH["Flash Trade Program"]
+        SOL["Solana Network"]
+    end
 
-| Stage | What It Does |
-|:------|:-------------|
-| **1. Regex Parse** | Extracts structured intent from user input using deterministic regex |
-| **2. Zod Validate** | Enforces parameter types and ranges (leverage 1–100x, collateral $10–$10M) |
-| **3. Market Resolve** | Maps symbol to Flash Trade pool via `getPoolForMarket()`, checks trading hours |
-| **4. Trade Builder** | Computes position size and estimates fees from on-chain `CustodyAccount` data |
-| **5. Trade Limits** | Enforces configurable caps (`MAX_COLLATERAL_PER_TRADE`, `MAX_POSITION_SIZE`, `MAX_LEVERAGE`) |
-| **6. Rate Limiter** | Prevents rapid submissions (default: 10/min, 3s minimum delay) |
-| **7. Confirmation Gate** | Displays full trade summary with risk preview, requires explicit `yes` |
-| **8. Signing Audit** | Logs trade attempt to `~/.flash/signing-audit.log` (never logs keys) |
-| **9. Program Whitelist** | Validates all instructions against approved programs, then freezes with `Object.freeze()` |
-| **10. Pre-Send Simulation** | Simulates transaction on-chain (~200ms). Program errors abort immediately |
-| **11. Broadcast + Reconcile** | Sends transaction, polls confirmation for 45s, verifies position on-chain |
+    CLI --> NLP
+    NLP --> AGENT
+    NLP --> ORDER
 
-### Confirmation Gate
+    PYTH -.->|"market data"| AGENT
+    CACHE -.->|"positions"| AGENT
+    AGENT --> SCAN
+    SCAN --> STRAT
+    STRAT --> REGIME
+    REGIME --> SCORE
 
-Before signing, the user sees a full trade preview:
+    SCORE --> FILTER
+    FILTER --> POLICY
+    POLICY -->|"trade signal"| GUARD
 
-```
-CONFIRM TRANSACTION
-─────────────────────────────────
-  Market:      SOL LONG
-  Pool:        Crypto.1
-  Leverage:    5x
-  Collateral:  $100.00 USDC
-  Size:        $500.00
-  Est. Fee:    $0.40  (0.08%)
-  Wallet:      ABDR...7x4f
+    GUARD --> CB
+    CB --> KILL
+    KILL --> EXPOSURE
+    EXPOSURE -->|"approved"| ORDER
 
-  Est. Entry:  $148.52
-  Est. Liq:    $121.79
-  Distance:    18.0%
-  Risk:        HIGH
+    ORDER --> TX
+    TX --> SIM
+    SIM -->|"on-chain execution"| CLIENT
 
-Type "yes" to sign or "no" to cancel
+    CLIENT --> RPC
+    RPC --> FLASH
+    FLASH --> SOL
+
+    SOL -.->|"confirmation + state"| CACHE
+    CACHE -.->|"reconciliation"| LEARN
+    LEARN -.->|"policy update"| AGENT
+
+    style RISK fill:#1a1a2e,stroke:#e94560,stroke-width:2px,color:#fff
+    style INTELLIGENCE fill:#1a1a2e,stroke:#0f3460,stroke-width:2px,color:#fff
+    style EXECUTION fill:#1a1a2e,stroke:#16213e,stroke-width:2px,color:#fff
+    style CHAIN fill:#1a1a2e,stroke:#9945FF,stroke-width:2px,color:#fff
 ```
 
-## Dual Client Architecture
+## Layer Breakdown
 
-Flash Terminal uses an `IFlashClient` interface that abstracts the underlying implementation:
+**Interface.** The CLI REPL (`src/cli/terminal.ts`) accepts user input and routes it through a three-tier parser: fast dispatch for single-token commands, regex patterns for structured commands, and LLM fallback for natural language. Output is always a `ParsedIntent` struct — the rest of the system never sees raw text.
 
-| Client | Mode | Transactions | Fee Source |
-|:-------|:-----|:-------------|:-----------|
-| `FlashClient` | Live | Real on-chain | `CustodyAccount` |
-| `SimulatedFlashClient` | Simulation | Paper trades (in-memory) | 0.08% approximation |
+**Intelligence.** The autonomous agent (`src/agent/`) runs a tick loop (adaptive 2-30s interval) that scans 32 markets in parallel. Three independent strategies (momentum, mean reversion, whale follow) generate signals. The regime detector classifies each market's condition (trend, range, volatility, compression) and adjusts strategy weights accordingly. A Q-learning system with 36 states and 4 actions refines policy over time.
 
-Both clients share identical validation, confirmation, and display logic. The safety pipeline (stages 1–9) runs in both modes.
+**Decision Engine.** Raw signals are scored by opportunity strength, regime fit, and risk-reward ratio. The confidence gate requires EV of at least 20 bps after costs and 2-tick price confirmation. The policy learner makes the final trade/skip/scale decision based on accumulated Q-table weights.
+
+**Risk & Safety.** Four independent gates in series: signing guard (per-trade limits + rate limiter), circuit breaker (session/daily loss caps), kill switch (master toggle), and exposure control (portfolio-level cap). Every trade passes through all four. See [Risk & Safety Systems](./risk-safety.md) for full detail.
+
+**Execution Engine.** The order engine handles market orders, limit orders, and TP/SL. The TX builder compiles `MessageV0` with cached blockhash and dynamic compute units. Pre-flight simulation runs on-chain before broadcast — program errors abort before funds are at risk.
+
+**Data & Infrastructure.** The Flash SDK client (live or simulated) sits behind the `IFlashClient` interface. The RPC manager handles multi-endpoint failover with slot lag detection. Pyth Hermes provides oracle prices with a 5s cache. State cache holds positions and balances with a 30s TTL, invalidated post-trade.
+
+**Flash Trade Protocol.** The on-chain program on Solana. Flash Terminal reads all parameters (fees, margins, leverage limits, liquidation math) from `CustodyAccount` state. It never overrides protocol values.
+
+## Execution Pipeline
+
+When you type `open 5x long SOL $100`, seven steps execute in sequence:
+
+1. **Parse.** Regex parser extracts intent: market=SOL, side=long, leverage=5, collateral=$100.
+2. **Resolve pool.** `getPoolForMarket()` maps SOL to the correct Flash Trade pool from on-chain `PoolConfig`.
+3. **Fetch price.** Pyth Hermes oracle returns the current price with staleness (<30s), confidence (<2%), and deviation checks.
+4. **Signing guard.** Trade parameters are validated against configured limits. Full summary is displayed. You confirm.
+5. **Simulate.** Transaction is simulated on-chain. Program errors (insufficient margin, invalid leverage) abort here.
+6. **Freeze instructions.** `Object.freeze()` locks the instruction array. Program whitelist is enforced.
+7. **Broadcast.** `sendRawTransaction` with maxRetries:3. HTTP polling confirms. State reconciler verifies the position exists on-chain.
+
+No step is hidden. No step is skippable.
+
+## Agent Decision Loop
+
+The agent operates a closed-loop cycle: observe market state, generate and score signals, filter through risk gates, execute on-chain, then update policy weights based on realized outcomes. Every cycle feeds the next.
+
+```mermaid
+graph LR
+    subgraph OBSERVE["&nbsp; OBSERVE &nbsp;"]
+        MKT["Fetch Prices<br/><sub>Pyth · cached 5s</sub>"]
+        POS["Fetch Positions<br/><sub>on-chain · cached 20s</sub>"]
+        EVT["Event Triggers<br/><sub>price spike · OI shift · funding flip</sub>"]
+    end
+
+    subgraph ANALYZE["&nbsp; ANALYZE &nbsp;"]
+        SIG["Signal Fusion<br/><sub>6 strategies · Bayesian</sub>"]
+        REG["Regime Classification<br/><sub>per-market state</sub>"]
+    end
+
+    subgraph SCORE_FILTER["&nbsp; SCORE & FILTER &nbsp;"]
+        OPP["Opportunity Scorer<br/><sub>strength · regime fit · R:R</sub>"]
+        EV["EV Validation<br/><sub>≥ 20 bps after costs</sub>"]
+        POL["Policy Decision<br/><sub>trade · skip · scale</sub>"]
+    end
+
+    subgraph EXECUTE_LEARN["&nbsp; EXECUTE & LEARN &nbsp;"]
+        EXEC["Execute Trade<br/><sub>full safety stack</sub>"]
+        RESULT["Observe Outcome<br/><sub>PnL · slippage · fill time</sub>"]
+        UPDATE["Update Policy<br/><sub>Q-learning · reward shaping</sub>"]
+        EDGE["Edge Profiler<br/><sub>real EV · cost drag · Sharpe</sub>"]
+    end
+
+    MKT --> SIG
+    POS --> SIG
+    EVT -->|"fast path"| SIG
+    SIG --> REG
+    REG --> OPP
+    OPP --> EV
+    EV --> POL
+
+    POL -->|"approved"| EXEC
+    POL -.->|"skip"| MKT
+
+    EXEC --> RESULT
+    RESULT --> UPDATE
+    RESULT --> EDGE
+    UPDATE -.->|"policy weights"| POL
+    EDGE -.->|"strategy disable"| SIG
+
+    style SCORE_FILTER fill:#1a1a2e,stroke:#e94560,stroke-width:2px,color:#fff
+    style EXECUTE_LEARN fill:#1a1a2e,stroke:#0f3460,stroke-width:2px,color:#fff
+```
 
 ## Data Flow
 
-```
-                  ┌──────────────┐
-                  │  Pyth Hermes │ ─── Oracle prices (5s cache)
-                  └──────┬───────┘
-                         │
-┌──────────┐    ┌────────▼────────┐    ┌──────────────┐
-│ Flash SDK│────│  Flash Terminal │────│  fstats API  │
-│          │    │                  │    │              │
-│PoolConfig│    │  IFlashClient   │    │ OI, volume   │
-│Custody   │    │  RPC Manager    │    │ whales, fees │
-│Position  │    │  Risk Monitor   │    │ leaderboard  │
-└──────────┘    └────────┬────────┘    └──────────────┘
-                         │
-                ┌────────▼────────┐
-                │   Solana RPC    │
-                │  (multi-endpoint│
-                │   with failover)│
-                └────────┬────────┘
-                         │
-                ┌────────▼────────┐
-                │  Flash Trade    │
-                │  Program        │
-                └─────────────────┘
-```
+Three flows run concurrently:
 
-| Data | Source | Cache | Validation |
-|:-----|:-------|:------|:-----------|
-| Oracle prices | Pyth Hermes | 5s TTL | Staleness <30s, confidence <2% |
-| Fee rates, leverage | `CustodyAccount` (on-chain) | ~60s slot-based | `ProtocolParameterError` on corruption |
-| Positions | Flash SDK `getUserPositions()` | Real-time | `Number.isFinite()` on all fields |
-| Liquidation prices | Flash SDK `getLiquidationPriceContractHelper()` | Real-time | 0.5% divergence detection |
-| OI, volume, whales | fstats API | 15s TTL | Response size <2MB |
-| Pool/market config | Flash SDK `PoolConfig` | Static | Loaded from SDK at startup |
+**Upward (market data).** Pyth oracle prices and on-chain state flow up through tiered caches (5s prices, 15s snapshots, 30s balances) into the intelligence layer. The agent consumes cached data — it never queries RPC directly.
 
-See [Data Sources](/guide/data-sources) for full details on caching, validation, and fallback behavior.
+**Downward (execution).** Trade signals flow down through the four risk gates, into the order engine, through simulation, and onto the chain. Each gate can reject. Rejection is final for that signal.
 
-## Protocol Alignment
-
-Flash Terminal delegates all protocol math to the Flash SDK. No protocol logic is reimplemented.
-
-| Calculation | Source |
-|:------------|:-------|
-| Fee rates | `CustodyAccount.fees` / `RATE_POWER` |
-| Max leverage | `CustodyAccount.pricing.maxLeverage` / `BPS_POWER` |
-| Liquidation price | `getLiquidationPriceContractHelper()` |
-| Maintenance margin | `1 / maxLeverage` (derived from on-chain) |
-| Position state | `getUserPositions()` |
-
-The `protocol verify` command runs 6 real-time checks to confirm CLI calculations match on-chain state. See [Protocol Alignment](/guide/protocol-alignment) for details.
-
-## Project Structure
-
-```
-src/
-  cli/            Terminal REPL, autocomplete, status bar
-  ai/             Intent parsing (regex + NLP fallback)
-  tools/          Tool engine, trading tools, doctor diagnostics
-  client/         Flash SDK client (live) + paper trading client (sim)
-  agent/          Analysis, scanner, dashboard tools
-  core/           Transaction engine, state reconciliation, middleware
-  risk/           TP/SL engine, liquidation risk, exposure
-  monitor/        Background risk monitoring, event tracking
-  security/       Signing guard, circuit breaker, trading gate
-  network/        RPC manager, multi-endpoint failover
-  protocol/       Protocol inspector
-  wallet/         Keypair management, wallet store
-  journal/        Trade journal, crash recovery
-  data/           Price service (Pyth), fstats client
-  config/         Environment config, pool/market mapping
-  observability/  Metrics, alert hooks
-  plugins/        Dynamic plugin loader
-  types/          Types, enums, Zod schemas
-  utils/          Logger, formatting, safe math
-```
-
-## Key Design Decisions
-
-| Decision | Rationale |
-|:---------|:----------|
-| Regex parsing for trades | Deterministic — same input always produces same action |
-| AI never touches trades | NLP handles read-only queries only |
-| Protocol parameters from on-chain | Fee rates, leverage, margins read from `CustodyAccount` |
-| Blockchain state is authoritative | Reconciler overwrites local state after 2 consecutive mismatches |
-| No fabricated data | Missing data returns empty results, never synthetic values |
-| SDK delegation | All protocol math uses Flash SDK helpers |
-| Program ID whitelist | Only approved programs can be targeted |
-| Instruction freeze | `Object.freeze()` after validation prevents mutation before signing |
-| Bounded caches | Every cache has max size + TTL eviction |
-| Separate signing audit log | Every trade attempt recorded with outcome |
+**Circular (learning).** After a trade confirms, the state reconciler syncs on-chain state back into the cache. The edge profiler computes realized PnL, slippage, and cost drag. Q-learning updates policy weights. The next tick cycle uses the updated policy. The loop is closed.

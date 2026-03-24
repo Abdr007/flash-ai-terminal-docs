@@ -1,70 +1,56 @@
 # Introduction
 
-**Flash Terminal** is a deterministic command line interface for the [Flash Trade](https://www.flash.trade/) perpetual futures protocol on Solana.
+**Flash Terminal** is a deterministic command-line trading engine for [Flash Trade](https://www.flash.trade/) perpetual futures on Solana.
 
-It provides a transparent, protocol-aligned trading terminal where every calculation — fees, leverage, liquidation prices, margins — is derived from on-chain state or official SDK helpers.
+It connects directly to the Flash protocol through the official SDK, executes trades on-chain, and provides real-time position management with automated risk controls and an autonomous learning agent.
 
-## What Flash Terminal Does
+## What It Does
 
-- Execute leveraged trades on Flash Trade (open, close, add/remove collateral)
-- Inspect protocol state (pools, markets, fees, open interest)
-- Monitor positions with real-time risk alerts
-- Analyze markets using live data from Pyth Hermes and fstats
-- Verify protocol alignment with built-in audit tools
+- Executes leveraged perpetual futures trades on Solana mainnet
+- Provides paper trading with real oracle prices (simulation mode)
+- Monitors positions with real-time risk alerts and automated TP/SL
+- Runs an autonomous trading agent that learns from market conditions
+- Inspects protocol state: pools, fees, open interest, liquidation math
+- Manages liquidity positions (FLP/sFLP) and FAF governance staking
 
-## What Flash Terminal Does Not Do
+## What It Does Not Do
 
-- Generate trading signals or predictions
-- Fabricate analytics or synthetic data
-- Reimplement protocol logic when an SDK helper exists
-- Modify or extend protocol behavior
+- **No price predictions.** The system does not forecast market direction.
+- **No black-box AI in the trade path.** AI assists with command parsing only.
+- **No fabricated data.** If a value can't be read from chain or oracle, it's absent.
+- **No hidden logic.** The transaction you confirm is the transaction that's signed.
 
 ## Design Principles
 
-**Deterministic** — Trade commands are parsed with structured regex. Same input, same action.
-
-**Protocol-aligned** — Fee rates from `CustodyAccount`, liquidation prices from `getLiquidationPriceContractHelper()`, leverage from `PoolConfig`.
-
-**Observable** — All protocol state is queryable from the CLI. Nothing is hidden.
-
-**Auditable** — Every trade attempt is logged. State reconciliation verifies positions on-chain.
+| Principle | Implementation |
+|:----------|:---------------|
+| **Deterministic** | Regex parser handles all commands. NLP is a fallback, never in the execution path. |
+| **Protocol-aligned** | Fees, margins, leverage limits, and liquidation math from on-chain `CustodyAccount` state. |
+| **Safe by default** | 10-layer safety stack is always active. Circuit breakers, signing gates, and kill switches are infrastructure. |
+| **Zero fabrication** | Prices from Pyth Hermes. Positions from Flash SDK. Unreachable sources degrade to stale cache, never to synthetic data. |
 
 ## Data Sources
 
-| Source | Data | Usage |
-|:-------|:-----|:------|
-| Flash SDK | Positions, pool config, liquidation math, leverage limits | Trade execution, position queries |
-| Pyth Hermes | Oracle prices (same feeds as Flash protocol on-chain) | Mark prices, PnL calculations |
-| CustodyAccount | Fee rates, max leverage, maintenance margin | Fee calculation, risk preview |
-| Solana RPC | Transaction broadcast, wallet balances, on-chain state | Trade execution, balance queries |
-| fstats API | Open interest, volume, leaderboards, whale positions | Market analytics |
+| Data | Source |
+|:-----|:-------|
+| Prices | Pyth Hermes oracle (same feeds used by Flash on-chain) |
+| Positions | Flash SDK — on-chain `PositionAccount` |
+| Fees & Parameters | On-chain `CustodyAccount` |
+| Open Interest | fstats analytics API |
+| Wallet Balances | Solana RPC |
 
-## Operating Modes
+## Modes
 
-| Mode | Description |
-|:-----|:------------|
-| **Simulation** | Paper trading with real oracle prices. No transactions signed. |
-| **Live** | Real transactions on Solana mainnet. Requires connected wallet. |
+Flash Terminal operates in two modes, selected at startup:
 
-Mode is selected at startup and locked for the session.
+**Simulation** — Paper trading with real oracle prices. Virtual USDC balance. No transactions. Selected by default.
 
-## Quick Demo
+**Live** — Real on-chain execution. Requires a funded wallet (SOL for fees, USDC for collateral). Every trade passes through the full safety stack before signing.
 
-```bash
-flash                           # start the terminal (select mode)
-markets                         # list all supported markets
-inspect protocol                # protocol-wide statistics
-protocol verify                 # run protocol alignment audit
-dryrun open 2x long SOL $10    # preview a trade
-open 2x long SOL $10           # execute the trade
-positions                       # view open positions
-close SOL long                  # close the position
-exit                            # clean shutdown
-```
+The mode is locked for the duration of the session. You cannot switch mid-session.
 
 ## Next Steps
 
-- [Installation](/guide/getting-started) — Set up Flash Terminal
-- [Architecture](/guide/architecture) — Understand the system design
-- [Trading Guide](/guide/trading-commands) — Learn trading commands
-- [Protocol Alignment](/guide/protocol-alignment) — How the CLI mirrors the protocol
+- [Quick Start](/guide/getting-started) — Install and run your first trade
+- [Core Concepts](/guide/core-concepts) — Understand markets, leverage, and liquidation
+- [Architecture](/guide/architecture) — How the system is built
