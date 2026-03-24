@@ -56,14 +56,24 @@ The deterministic path is always tried first. The LLM fallback is read-only for 
 | `stake <amount> FLP` | Stake FLP tokens |
 | `unstake <amount> FLP` | Unstake FLP tokens |
 
-### FAF (Flash Automated Fills)
+### FAF Token
 
 | Command | Description |
 |:--------|:------------|
-| `set tp <asset> $<price>` | Set take-profit trigger |
-| `set sl <asset> $<price>` | Set stop-loss trigger |
-| `cancel tp <asset>` | Cancel take-profit |
-| `cancel sl <asset>` | Cancel stop-loss |
+| `faf` | FAF staking dashboard |
+| `faf stake <amount>` | Stake FAF for revenue sharing + VIP |
+| `faf claim` | Claim FAF rewards + USDC revenue |
+| `faf tier` | VIP tier levels and benefits |
+
+### TP/SL Automation
+
+| Command | Description |
+|:--------|:------------|
+| `set tp <asset> <side> $<price>` | Set take-profit trigger |
+| `set sl <asset> <side> $<price>` | Set stop-loss trigger |
+| `remove tp <asset> <side>` | Remove take-profit |
+| `remove sl <asset> <side>` | Remove stop-loss |
+| `tp status` | View active targets |
 
 ### Market Data
 

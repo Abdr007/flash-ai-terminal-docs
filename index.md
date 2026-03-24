@@ -20,7 +20,7 @@ features:
     linkText: Architecture
   - icon: "\uD83E\uDD16"
     title: Autonomous Agent
-    details: AI-powered market scanner, portfolio rebalancer, and autopilot. The agent reads live oracle prices and on-chain state — it never fabricates data. Trade commands always use deterministic regex parsing, never LLM output.
+    details: Self-learning trading agent with Q-learning policy optimization, edge validation, and automatic strategy disabling. Scans 32 markets, adapts to regime changes, and persists learning state across sessions.
     link: /guide/terminal-features
     linkText: Agent docs
   - icon: "\uD83D\uDEE1\uFE0F"

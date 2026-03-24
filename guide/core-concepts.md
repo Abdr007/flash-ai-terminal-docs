@@ -15,7 +15,7 @@ Flash Terminal supports 32+ assets organized into **pools**. A pool is a liquidi
 | **Community.2** | WIF | Community tokens |
 | **Trump.1** | FARTCOIN | Meme tokens |
 | **Ore.1** | ORE | Mining tokens |
-| **Ondo.1** | SPY, NVDA, TSLA, AAPL, AMD, AMZN, PLTR | Equity indices and stocks |
+| **Equity.1** | SPY, NVDA, TSLA, AAPL, AMD, AMZN | Equity indices and stocks |
 
 Pools and their markets are discovered dynamically from the Flash SDK's `PoolConfig.json`. When Flash Trade adds new markets, they appear in Flash Terminal after updating the SDK dependency.
 

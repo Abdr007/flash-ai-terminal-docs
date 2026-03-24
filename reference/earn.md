@@ -352,12 +352,13 @@ Analyzes yield trends and suggests rebalancing LP across pools for optimal risk-
 | Pool | Pool ID | Assets |
 |------|---------|--------|
 | crypto | Crypto.1 | SOL, BTC, ETH |
-| gold | Gold.1 | XAU (tokenized gold) |
-| defi | DeFi.1 | JUP, RNDR, PYTH, HNT, JTO, BONK |
-| meme | Meme.1 | WIF, BONK, POPCAT, TRUMP |
-| wif | WIF.1 | WIF single-asset |
-| ore | ORE.1 | ORE single-asset |
-| fart | FART.1 | FART single-asset |
+| gold | Virtual.1 | XAU, XAG, EUR, GBP, CRUDEOIL, USDJPY, USDCNH |
+| defi | Governance.1 | JUP, PYTH, JTO, RAY, KMNO, MET, HYPE |
+| meme | Community.1 | BONK, PENGU, PUMP |
+| wif | Community.2 | WIF |
+| fart | Trump.1 | FARTCOIN |
+| ore | Ore.1 | ORE |
+| equity | Equity.1 | SPY, NVDA, TSLA, AAPL, AMD, AMZN |
 
 ## FLP vs sFLP
 
