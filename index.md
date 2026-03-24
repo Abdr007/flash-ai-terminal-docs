@@ -53,6 +53,13 @@ Flash Terminal is a command-line interface for trading perpetual futures on [Fla
 
 It is not a wrapper around a web UI. It is a trading system — with its own safety stack, execution engine, and observability layer — that uses Flash Trade as its settlement layer.
 
+```bash
+npm install -g flash-terminal
+flash
+```
+
+[![npm](https://img.shields.io/npm/v/flash-terminal?style=flat-square&label=flash-terminal&color=26d97f)](https://www.npmjs.com/package/flash-terminal)
+
 ### Key Capabilities
 
 | Capability | Detail |

@@ -12,11 +12,15 @@ Goal: execute your first trade in under 5 minutes.
 
 ## Step 1: Install
 
+**npm (recommended):**
+
 ```bash
 npm install -g flash-terminal
 ```
 
-Or install from source:
+[![npm](https://img.shields.io/npm/v/flash-terminal?style=flat-square&label=flash-terminal&color=26d97f)](https://www.npmjs.com/package/flash-terminal)
+
+**From source:**
 
 ```bash
 git clone https://github.com/Abdr007/flash-terminal.git
