@@ -85,6 +85,14 @@ export default defineConfig({
           ],
         },
         {
+          text: 'Earn & Staking',
+          collapsed: false,
+          items: [
+            { text: 'Earn (Liquidity)', link: '/reference/earn' },
+            { text: 'FAF Token', link: '/reference/faf' },
+          ],
+        },
+        {
           text: 'Protocol',
           collapsed: false,
           items: [
