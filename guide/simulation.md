@@ -1,75 +1,80 @@
 # Simulation Mode
 
-Flash Terminal prompts users to select Simulation or Live mode when starting the CLI. Simulation mode enables paper trading with real oracle prices, allowing traders to test strategies without risking funds.
+Practice trading with real market prices and zero risk.
 
 ## How It Works
 
-When Simulation mode is selected at startup, the terminal uses a paper trading engine instead of the Flash SDK:
+Simulation mode gives you a virtual USDC balance. Every trade uses the same commands and interface as live mode — but no real money is involved.
 
-- **Virtual USDC balance** -- Positions are tracked in memory with a virtual balance
-- **Real-time oracle prices** -- Prices come from live Pyth oracle data
-- **Mark-to-market PnL** -- Positions are valued against current oracle prices
-- **Protocol-approximated fees** -- Open/close fees use 0.08% (8 bps) of position size, approximating typical Flash Trade `CustodyAccount` fee rates. Live mode reads exact rates from on-chain data.
-- **No transaction signing** -- No transactions are signed or broadcast to the blockchain
+| Feature | Simulation | Live |
+|:--------|:-----------|:-----|
+| **Wallet needed** | No | Yes |
+| **Transactions signed** | No | Yes |
+| **Funds at risk** | No | Yes |
+| **Oracle prices** | Real (Pyth) | Real (Pyth) |
+| **Fee model** | ~0.08% approximation | Exact on-chain rates |
+| **Position tracking** | In-memory | On-chain |
 
-## Starting the Terminal
+## Starting in Simulation
 
-When you start the CLI, you are prompted to select a mode:
+When you launch `flash`, choose **Simulation** at the mode selection screen. The prompt shows `[sim]`:
+
+```
+flash [sim] >
+```
+
+No setup required. No `.env` needed. Just install and go.
+
+## Example Session
 
 ```bash
-flash
+# Open a position
+flash [sim] > open 2x long SOL $100
+
+# Check positions
+flash [sim] > positions
+
+# Check portfolio
+flash [sim] > portfolio
+
+# Close the position
+flash [sim] > close SOL long
+
+# View trade history
+flash [sim] > history
 ```
 
-The prompt indicates which mode is active:
-
-```
-flash [sim] > _
-```
+Everything works the same as live mode except nothing touches the blockchain.
 
 ## Dry Run
 
-The `dryrun` command compiles and simulates a transaction on-chain without signing or broadcasting. This is available regardless of mode selection.
+Preview any trade without executing — available in both modes:
 
 ```bash
 dryrun open 5x long SOL $100
 ```
 
-Example output:
+Shows estimated entry price, fees, liquidation price, and compute units. Useful for checking if a trade will work before committing.
+
+## Switching to Live
+
+1. Set up your [wallet](/guide/wallet-setup) and [RPC](/guide/rpc-setup)
+2. Set `SIMULATION_MODE=false` in `.env`
+3. Restart `flash`
+4. Choose **Live** at the mode selection screen
+
+The prompt changes to `[live]`:
 
 ```
-DRY-RUN RESULTS
-─────────────────────
-  Status:            Success
-  Estimated Fee:     $0.08
-  Compute Units:     142,350
-  Entry Price:       $148.52
-  Liquidation Price: $121.79
-
-  Program Logs:
-    Program Flash...invoke [1]
-    Program log: Instruction: OpenPosition
-    ...
+flash [live] >
 ```
 
-### Dry Run Use Cases
+::: warning
+You cannot switch modes mid-session. This is a safety feature to prevent accidentally trading with real funds.
+:::
 
-- **Before your first live trade** -- Verify the transaction compiles and the program accepts it
-- **Unusual leverage levels** -- Confirm the protocol allows the leverage on the target market
-- **Compute unit requirements** -- Check CU consumption for priority fee estimation
-- **Debugging** -- Inspect full Solana runtime simulation output for failed transactions
+## Next Steps
 
-## Simulation vs Live
-
-| Feature | Simulation | Live |
-|---------|-----------|------|
-| Wallet required | No | Yes |
-| Transactions signed | No | Yes |
-| Funds at risk | No | Yes |
-| Oracle prices | Real (Pyth) | Real (Pyth) |
-| Fee model | 0.08% approximation | On-chain `CustodyAccount` rates |
-| Position tracking | In-memory | On-chain |
-| Risk preview | Yes | Yes |
-
-## Safety
-
-The mode is selected at startup and locked for the entire session. There is no command or API to switch between Simulation and Live mode mid-session. This prevents accidental transitions from paper trading to real execution.
+- [Trading Guide](/guide/trading-guide) — Understand how trades work
+- [Wallet Setup](/guide/wallet-setup) — Connect a real wallet
+- [Basic Commands](/guide/basic-commands) — All available commands

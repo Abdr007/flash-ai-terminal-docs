@@ -3,13 +3,13 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Flash Terminal',
   titleTemplate: ':title — Flash Terminal',
-  description: 'Deterministic on-chain trading infrastructure for Solana perpetual futures.',
+  description: 'Trade Solana perpetual futures from the command line. Simple, safe, powerful.',
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['meta', { name: 'theme-color', content: '#26d97f' }],
     ['meta', { name: 'og:title', content: 'Flash Terminal — Documentation' }],
-    ['meta', { name: 'og:description', content: 'Deterministic on-chain trading infrastructure for Solana perpetual futures.' }],
+    ['meta', { name: 'og:description', content: 'Trade Solana perpetual futures from the command line.' }],
     ['meta', { name: 'og:type', content: 'website' }],
   ],
 
@@ -49,73 +49,48 @@ export default defineConfig({
     sidebar: {
       '/guide/': [
         {
-          text: 'Getting Started',
+          text: 'Get Started',
           collapsed: false,
           items: [
             { text: 'Introduction', link: '/guide/introduction' },
-            { text: 'Quick Start', link: '/guide/getting-started' },
-            { text: 'Core Concepts', link: '/guide/core-concepts' },
+            { text: 'Quick Start', link: '/guide/quick-start' },
+            { text: 'Installation', link: '/guide/installation' },
           ],
         },
         {
-          text: 'Trading',
+          text: 'Setup',
           collapsed: false,
           items: [
-            { text: 'CLI Guide', link: '/guide/cli-guide' },
-            { text: 'Trading Guide', link: '/guide/trading-commands' },
-            { text: 'Risk & Liquidation', link: '/guide/risk-preview' },
+            { text: 'Wallet Setup', link: '/guide/wallet-setup' },
+            { text: 'RPC Setup', link: '/guide/rpc-setup' },
+            { text: 'Configuration (.env)', link: '/guide/configuration' },
+          ],
+        },
+        {
+          text: 'Using Flash Terminal',
+          collapsed: false,
+          items: [
+            { text: 'Basic Commands', link: '/guide/basic-commands' },
+            { text: 'Trading Guide', link: '/guide/trading-guide' },
             { text: 'Simulation Mode', link: '/guide/simulation' },
-          ],
-        },
-        {
-          text: 'Autonomous Agent',
-          collapsed: false,
-          items: [
-            { text: 'Agent System', link: '/guide/autonomous-agent' },
-            { text: 'Strategies', link: '/guide/strategies' },
-          ],
-        },
-        {
-          text: 'Architecture & Safety',
-          collapsed: false,
-          items: [
-            { text: 'Architecture', link: '/guide/architecture' },
-            { text: 'Risk & Safety Systems', link: '/guide/risk-safety' },
-            { text: 'Security Model', link: '/guide/security' },
-          ],
-        },
-        {
-          text: 'Earn & Staking',
-          collapsed: false,
-          items: [
-            { text: 'Earn (Liquidity)', link: '/reference/earn' },
-            { text: 'FAF Token', link: '/reference/faf' },
-          ],
-        },
-        {
-          text: 'Protocol',
-          collapsed: false,
-          items: [
-            { text: 'Protocol Alignment', link: '/guide/protocol-alignment' },
-            { text: 'Protocol Inspection', link: '/guide/protocol-inspection' },
-            { text: 'Data Sources', link: '/guide/data-sources' },
-          ],
-        },
-        {
-          text: 'Infrastructure',
-          collapsed: false,
-          items: [
-            { text: 'RPC & Networking', link: '/guide/infrastructure' },
-            { text: 'Market Analytics', link: '/guide/market-analytics' },
-            { text: 'Terminal Features', link: '/guide/terminal-features' },
           ],
         },
         {
           text: 'Advanced',
           collapsed: false,
           items: [
-            { text: 'Configuration', link: '/guide/advanced' },
+            { text: 'Autonomous Agent', link: '/guide/autonomous-agent' },
+            { text: 'Strategies', link: '/guide/strategies' },
+            { text: 'Risk & Safety', link: '/guide/risk-safety' },
+            { text: 'Architecture', link: '/guide/architecture' },
+          ],
+        },
+        {
+          text: 'Help',
+          collapsed: false,
+          items: [
             { text: 'Troubleshooting', link: '/guide/troubleshooting' },
+            { text: 'FAQ', link: '/guide/faq' },
           ],
         },
       ],
@@ -150,7 +125,7 @@ export default defineConfig({
     },
 
     footer: {
-      message: 'Flash Terminal — Deterministic On-Chain Trading Infrastructure',
+      message: 'Flash Terminal — Trade Solana Perpetual Futures from the CLI',
       copyright: 'MIT License · Built for the Flash Trade protocol on Solana',
     },
 

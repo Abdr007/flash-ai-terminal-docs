@@ -1,56 +1,46 @@
 # Introduction
 
-**Flash Terminal** is a deterministic command-line trading engine for [Flash Trade](https://www.flash.trade/) perpetual futures on Solana.
+## What is Flash Terminal?
 
-It connects directly to the Flash protocol through the official SDK, executes trades on-chain, and provides real-time position management with automated risk controls and an autonomous learning agent.
+Flash Terminal is a command-line tool that lets you trade perpetual futures on [Flash Trade](https://www.flash.trade/), a trading platform built on [Solana](https://solana.com/).
 
-## What It Does
+Think of it as a trading app — but instead of clicking buttons on a website, you type commands in your terminal.
 
-- Executes leveraged perpetual futures trades on Solana mainnet
-- Provides paper trading with real oracle prices (simulation mode)
-- Monitors positions with real-time risk alerts and automated TP/SL
-- Runs an autonomous trading agent that learns from market conditions
-- Inspects protocol state: pools, fees, open interest, liquidation math
-- Manages liquidity positions (FLP/sFLP) and FAF governance staking
+## What Does It Do?
 
-## What It Does Not Do
+- **Trade futures** — Go long or short on 32+ assets (crypto, stocks, commodities, forex)
+- **Paper trade** — Practice with virtual money using real market prices
+- **Monitor positions** — See your open trades, profits, and losses in real time
+- **Manage risk** — Built-in safety systems protect you from costly mistakes
+- **Automate** — A built-in agent can scan markets and trade for you
 
-- **No price predictions.** The system does not forecast market direction.
-- **No black-box AI in the trade path.** AI assists with command parsing only.
-- **No fabricated data.** If a value can't be read from chain or oracle, it's absent.
-- **No hidden logic.** The transaction you confirm is the transaction that's signed.
+## Who Is It For?
 
-## Design Principles
+- **Traders** who want fast, direct access to markets without a browser
+- **Developers** who prefer working in the terminal
+- **Anyone** who wants to practice trading futures risk-free
 
-| Principle | Implementation |
-|:----------|:---------------|
-| **Deterministic** | Regex parser handles all commands. NLP is a fallback, never in the execution path. |
-| **Protocol-aligned** | Fees, margins, leverage limits, and liquidation math from on-chain `CustodyAccount` state. |
-| **Safe by default** | 10-layer safety stack is always active. Circuit breakers, signing gates, and kill switches are infrastructure. |
-| **Zero fabrication** | Prices from Pyth Hermes. Positions from Flash SDK. Unreachable sources degrade to stale cache, never to synthetic data. |
+## Why Use a Terminal?
 
-## Data Sources
+| Advantage | Detail |
+|:----------|:-------|
+| **Speed** | Type a command, get results instantly |
+| **Control** | See exactly what every trade does before it executes |
+| **Transparency** | No hidden logic — every calculation is traceable |
+| **Safety** | 10 layers of protection on every live trade |
 
-| Data | Source |
-|:-----|:-------|
-| Prices | Pyth Hermes oracle (same feeds used by Flash on-chain) |
-| Positions | Flash SDK — on-chain `PositionAccount` |
-| Fees & Parameters | On-chain `CustodyAccount` |
-| Open Interest | fstats analytics API |
-| Wallet Balances | Solana RPC |
+## Two Modes
 
-## Modes
+Flash Terminal has two modes:
 
-Flash Terminal operates in two modes, selected at startup:
+**Simulation** — Practice trading with virtual USDC. Uses real market prices but never touches the blockchain. No wallet needed. This is the default.
 
-**Simulation** — Paper trading with real oracle prices. Virtual USDC balance. No transactions. Selected by default.
-
-**Live** — Real on-chain execution. Requires a funded wallet (SOL for fees, USDC for collateral). Every trade passes through the full safety stack before signing.
-
-The mode is locked for the duration of the session. You cannot switch mid-session.
+**Live** — Real trades on Solana. Requires a funded wallet. Every trade shows a full preview and asks for your confirmation before signing.
 
 ## Next Steps
 
-- [Quick Start](/guide/getting-started) — Install and run your first trade
-- [Core Concepts](/guide/core-concepts) — Understand markets, leverage, and liquidation
-- [Architecture](/guide/architecture) — How the system is built
+Ready to get started?
+
+- [Quick Start](/guide/quick-start) — Install and make your first trade
+- [Installation](/guide/installation) — Detailed install instructions
+- [Basic Commands](/guide/basic-commands) — Learn what you can do
