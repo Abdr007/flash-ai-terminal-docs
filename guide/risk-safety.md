@@ -1,6 +1,6 @@
 # Risk & Safety Systems
 
-Safety in Flash Terminal is not a feature. It is infrastructure. Every trade passes through 10 independent safety layers before it touches the chain. They are always active. They cannot be bypassed by the agent, by command input, or by configuration. There is no flag to turn them off.
+Safety in Flash Terminal is not a feature. It is infrastructure. Every trade passes through 10 independent safety layers before it touches the chain. They are always active. They cannot be bypassed by command input or by configuration. There is no flag to turn them off.
 
 This is the non-negotiable contract: **no transaction is signed unless every layer approves it.**
 
@@ -32,7 +32,7 @@ MAX_DAILY_LOSS_USD=1000
 MAX_PORTFOLIO_EXPOSURE=0.8
 ```
 
-When the circuit breaker trips, all trade operations return an error immediately. The agent stops submitting signals. Monitoring and position queries remain functional. To resume trading, restart the terminal session.
+When the circuit breaker trips, all trade operations return an error immediately. Monitoring and position queries remain functional. To resume trading, restart the terminal session.
 
 ## Risk Monitor
 

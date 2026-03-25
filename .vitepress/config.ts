@@ -79,8 +79,6 @@ export default defineConfig({
           text: 'Advanced',
           collapsed: false,
           items: [
-            { text: 'Autonomous Agent', link: '/guide/autonomous-agent' },
-            { text: 'Strategies', link: '/guide/strategies' },
             { text: 'Risk & Safety', link: '/guide/risk-safety' },
             { text: 'Architecture', link: '/guide/architecture' },
           ],
@@ -105,7 +103,6 @@ export default defineConfig({
             { text: 'Protocol', link: '/reference/protocol-inspector' },
             { text: 'Earn & Liquidity', link: '/reference/earn' },
             { text: 'FAF Token', link: '/reference/faf' },
-            { text: 'Agent', link: '/reference/agent' },
             { text: 'Wallet', link: '/reference/wallet' },
             { text: 'System', link: '/reference/system' },
           ],

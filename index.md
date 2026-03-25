@@ -28,11 +28,6 @@ features:
     details: Trade crypto, commodities, forex, equities, and meme tokens. All powered by real-time Pyth oracle prices.
     link: /guide/trading-guide
     linkText: Trading guide
-  - icon: "\uD83E\uDD16"
-    title: Autonomous Agent
-    details: Built-in trading agent that scans markets, learns from conditions, and executes strategies automatically with your risk limits.
-    link: /guide/autonomous-agent
-    linkText: Agent docs
   - icon: "\uD83E\uDDEA"
     title: Paper Trading
     details: Practice with real market prices and zero risk. Same commands, same interface — just no real money involved.

@@ -170,26 +170,9 @@ Mode is locked for the entire session. To switch:
 
 ---
 
-## Agent Not Trading
-
-**Cause:** The autonomous agent is running but not executing trades.
-
-This is usually **normal behavior**. The agent only trades when conditions are favorable.
-
-**Check in order:**
-
-1. **Cooldown** — Is a minimum trade interval in effect?
-2. **Low confidence** — No market passes the confidence gate
-3. **Circuit breaker** — Check with `doctor`
-4. **Kill switch** — Is `TRADING_ENABLED=false` in your `.env`?
-
-The agent is designed to do nothing when it doesn't find good opportunities.
-
----
-
 ## High Memory Usage
 
-**Fix:** Restart the terminal. Long-running sessions with frequent agent ticks can accumulate memory pressure. Flash Terminal caps all caches, but GC pressure builds over time.
+**Fix:** Restart the terminal. Long-running sessions can accumulate memory pressure. Flash Terminal caps all caches, but GC pressure builds over time.
 
 ---
 

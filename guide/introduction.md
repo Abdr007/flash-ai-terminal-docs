@@ -12,7 +12,7 @@ Think of it as a trading app — but instead of clicking buttons on a website, y
 - **Paper trade** — Practice with virtual money using real market prices
 - **Monitor positions** — See your open trades, profits, and losses in real time
 - **Manage risk** — Built-in safety systems protect you from costly mistakes
-- **Automate** — A built-in agent can scan markets and trade for you
+- **Automate** — Set take-profit and stop-loss orders that execute automatically
 
 ## Who Is It For?
 

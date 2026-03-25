@@ -63,7 +63,6 @@ ANTHROPIC_API_KEY=sk-ant-...
 # SHADOW_TRADING=true
 # SESSION_TIMEOUT_MS=900000
 # TRADING_ENABLED=true
-# NO_DNA=1
 ```
 
 ## Variable Reference
@@ -162,7 +161,6 @@ Logs rotate at 10MB. API keys are automatically scrubbed from log files.
 | `SHADOW_TRADING` | Mirror trades to shadow risk engine (no execution) | `false` |
 | `SESSION_TIMEOUT_MS` | Auto-disconnect after inactivity (ms) | `900000` (15 min) |
 | `TRADING_ENABLED` | Master kill switch (`false` disables all trades) | `true` |
-| `NO_DNA` | Agent mode: JSON output, no prompts, auto-confirm | `false` |
 
 ## Viewing Active Config
 

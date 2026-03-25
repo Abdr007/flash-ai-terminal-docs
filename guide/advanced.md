@@ -19,7 +19,7 @@ MAX_TRADES_PER_MINUTE=10
 MIN_DELAY_BETWEEN_TRADES_MS=3000
 ```
 
-The signing guard enforces these before every trade. If a trade exceeds any limit, it is rejected before simulation. The agent respects these limits identically to manual trades.
+The signing guard enforces these before every trade. If a trade exceeds any limit, it is rejected before simulation.
 
 ## Risk Controls
 
@@ -136,15 +136,6 @@ FLASH_STRICT_PROTOCOL=true
 
 When enabled, the terminal compares its locally calculated liquidation price against the protocol's on-chain value. If they diverge beyond tolerance, the trade is rejected. Useful for catching edge cases in margin math.
 
-## Agent Mode
-
-```bash
-# Structured JSON output, no interactive prompts, auto-confirms trades
-NO_DNA=1
-```
-
-Designed for programmatic integration. The agent outputs structured JSON instead of formatted tables. Trade confirmations are auto-approved (the signing guard still enforces limits). Use this when piping Flash Terminal output to another system.
-
 ## Performance Tuning
 
 **RPC selection.** Latency to your RPC endpoint is the single biggest factor in execution speed. Use a geographically close, dedicated RPC node. Shared public endpoints have unpredictable latency and rate limits. Helius and Triton are solid choices for Solana mainnet.
@@ -152,8 +143,6 @@ Designed for programmatic integration. The agent outputs structured JSON instead
 **Compute unit optimization.** Enable `FLASH_DYNAMIC_CU=true` to pay only for what you use. If you see transactions failing with "exceeded CU limit", increase `FLASH_CU_BUFFER_PCT` to 30-40%.
 
 **Cache behavior.** Oracle prices cache for 5s, market snapshots for 15s, wallet balances for 30s. Post-trade, balance caches are invalidated immediately. These values are not configurable — they are tuned for the balance between freshness and RPC load.
-
-**Agent tick rate.** The agent's tick interval is adaptive (2-30s). In volatile conditions it ticks faster. There is no manual override — the agent manages its own frequency based on market conditions and recent signal quality.
 
 ## Docker
 
