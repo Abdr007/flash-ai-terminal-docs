@@ -63,3 +63,7 @@ Cancel a pending unstake request by index.
 ```bash
 faf cancel <index>
 ```
+
+---
+
+**See also:** [Earn & Liquidity Guide](/guide/earn) | [Earn Commands](/reference/earn) | [Wallet](/reference/wallet)

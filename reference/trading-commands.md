@@ -163,3 +163,7 @@ swap <from> <to> $<amount>
 ```bash
 swap SOL USDC $10
 ```
+
+---
+
+**See also:** [Trading Guide](/guide/trading-guide) | [Market Data](/reference/market-data) | [Portfolio & Risk](/reference/portfolio-risk)

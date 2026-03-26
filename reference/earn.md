@@ -131,3 +131,7 @@ Suggest optimal liquidity rotation between pools.
 FLP integration partners.
 
 **Aliases:** `earn partners`
+
+---
+
+**See also:** [Earn & Liquidity Guide](/guide/earn) | [FAF Token](/reference/faf) | [Portfolio & Risk](/reference/portfolio-risk)

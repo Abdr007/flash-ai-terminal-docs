@@ -53,3 +53,7 @@ Display the current wallet's public address (hidden from help).
 ## wallet remove
 
 Remove a saved wallet by name (does not delete the keypair file).
+
+---
+
+**See also:** [Wallet Setup Guide](/guide/wallet-setup) | [Configuration](/guide/configuration) | [Troubleshooting](/guide/troubleshooting)

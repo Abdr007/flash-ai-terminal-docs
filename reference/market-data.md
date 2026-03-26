@@ -95,3 +95,7 @@ liquidations <asset>
 ## protocol health
 
 Overall protocol health metrics.
+
+---
+
+**See also:** [Trading Guide](/guide/trading-guide) | [Trading Commands](/reference/trading-commands) | [Protocol](/reference/protocol-inspector)

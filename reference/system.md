@@ -129,3 +129,7 @@ Clear the terminal screen.
 ## exit
 
 Quit Flash Terminal.
+
+---
+
+**See also:** [RPC Setup](/guide/rpc-setup) | [Troubleshooting](/guide/troubleshooting) | [Configuration](/guide/configuration)

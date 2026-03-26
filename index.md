@@ -92,7 +92,10 @@ Start paper trading immediately. No wallet. No config. No account.
 | Learn all commands | [Commands](/guide/commands) |
 | Understand leverage & PnL | [Trading Guide](/guide/trading-guide) |
 | Set up a real wallet | [Wallet Setup](/guide/wallet-setup) |
+| Configure your RPC connection | [RPC Setup](/guide/rpc-setup) |
 | Configure your environment | [Configuration](/guide/configuration) |
+| Provide liquidity & earn yield | [Earn & Liquidity](/guide/earn) |
+| Something not working? | [Troubleshooting](/guide/troubleshooting) |
 | Common questions | [FAQ](/guide/faq) |
 
 </div>

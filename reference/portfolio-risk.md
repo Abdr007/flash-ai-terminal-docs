@@ -35,3 +35,7 @@ Rebalance analysis with suggestions for position sizing.
 Portfolio capital state (hidden from help).
 
 **Aliases:** `portfolio state`
+
+---
+
+**See also:** [Risk & Safety](/guide/risk-safety) | [Trading Commands](/reference/trading-commands) | [Configuration](/guide/configuration)
