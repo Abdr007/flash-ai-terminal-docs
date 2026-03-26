@@ -2,45 +2,45 @@
 
 ## What is Flash Terminal?
 
-Flash Terminal is a command-line tool that lets you trade perpetual futures on [Flash Trade](https://www.flash.trade/), a trading platform built on [Solana](https://solana.com/).
+Flash Terminal is a command-line interface for trading perpetual futures on [Flash Trade](https://www.flash.trade/), a derivatives protocol on [Solana](https://solana.com/).
 
-Think of it as a trading app — but instead of clicking buttons on a website, you type commands in your terminal.
+Instead of clicking buttons on a website, you type commands. Instead of navigating dashboards, you get instant answers.
 
-## What Does It Do?
+## What Can You Do?
 
-- **Trade futures** — Go long or short on 32+ assets (crypto, stocks, commodities, forex)
-- **Paper trade** — Practice with virtual money using real market prices
-- **Monitor positions** — See your open trades, profits, and losses in real time
-- **Manage risk** — Built-in safety systems protect you from costly mistakes
-- **Automate** — Set take-profit and stop-loss orders that execute automatically
+- **Trade** — Open and close leveraged long/short positions on 32+ assets
+- **Earn** — Provide liquidity, stake FLP/FAF tokens, claim rewards
+- **Monitor** — Live prices, positions, portfolio, risk metrics, protocol stats
+- **Inspect** — Deep protocol inspection: open interest, whale activity, liquidation maps
+- **Manage** — Limit orders, take-profit/stop-loss, multi-wallet support
 
-## Who Is It For?
+## Available Markets
 
-- **Traders** who want fast, direct access to markets without a browser
-- **Developers** who prefer working in the terminal
-- **Anyone** who wants to practice trading futures risk-free
-
-## Why Use a Terminal?
-
-| Advantage | Detail |
-|:----------|:-------|
-| **Speed** | Type a command, get results instantly |
-| **Control** | See exactly what every trade does before it executes |
-| **Transparency** | No hidden logic — every calculation is traceable |
-| **Safety** | 10 layers of protection on every live trade |
+| Category | Assets |
+|:---------|:-------|
+| **Crypto** | SOL, BTC, ETH, BNB, ZEC |
+| **Equities** | SPY, NVDA, TSLA, AAPL, AMD, AMZN, PLTR |
+| **Commodities** | Gold (XAU), Silver (XAG), Crude Oil, Natural Gas |
+| **Forex** | EUR, GBP, USD/JPY, USD/CNH |
+| **Governance** | JTO, JUP, PYTH, RAY, HYPE, MET, KMNO |
+| **Community** | BONK, PENGU, WIF, PUMP, FARTCOIN, ORE |
 
 ## Two Modes
 
-Flash Terminal has two modes:
+**Simulation** (default) — Virtual USDC, real Pyth oracle prices, no wallet needed. Practice risk-free.
 
-**Simulation** — Practice trading with virtual USDC. Uses real market prices but never touches the blockchain. No wallet needed. This is the default.
+**Live** — Real trades on Solana mainnet. Requires a funded wallet. Every trade shows a full preview and requires explicit confirmation before signing.
 
-**Live** — Real trades on Solana. Requires a funded wallet. Every trade shows a full preview and asks for your confirmation before signing.
+## Why a CLI?
+
+| | |
+|:--|:--|
+| **Fast** | Type a command, get the result. No page loads. |
+| **Deterministic** | Every command maps to exactly one action. No ambiguity. |
+| **Transparent** | See every parameter before you sign. Nothing hidden. |
+| **Safe** | 10 independent safety layers on every live trade. |
 
 ## Next Steps
 
-Ready to get started?
-
-- [Quick Start](/guide/quick-start) — Install and make your first trade
-- [Installation](/guide/installation) — Detailed install instructions
-- [Basic Commands](/guide/basic-commands) — Learn what you can do
+- [Quick Start](/guide/quick-start) — Install and trade in 2 minutes
+- [Commands](/guide/commands) — Everything you can do

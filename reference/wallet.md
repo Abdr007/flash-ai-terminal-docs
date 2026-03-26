@@ -2,144 +2,54 @@
 
 ## wallet
 
-Show wallet connection status.
-
-**Description:** Displays whether a wallet is connected, the active wallet name, and the public key.
-
-**Syntax:**
-
-```bash
-wallet
-```
+Show wallet connection status: address, mode (sim/live), connection state.
 
 **Aliases:** `wallet status`
 
----
-
 ## wallet tokens
 
-View all token balances.
-
-**Description:** Lists all token balances for the connected wallet. Results are cached for 30 seconds.
-
-**Syntax:**
-
-```bash
-wallet tokens
-```
-
----
+View all token balances in the connected wallet. Detects SPL tokens and Token-2022 tokens. Uses 30-second cache.
 
 ## wallet balance
 
-Show SOL balance.
-
-**Description:** Displays the native SOL balance of the connected wallet.
-
-**Syntax:**
-
-```bash
-wallet balance
-```
-
----
+Show SOL balance only.
 
 ## wallet list
 
-List saved wallets.
-
-**Description:** Shows all wallets stored in `~/.flash/wallets/`.
-
-**Syntax:**
-
-```bash
-wallet list
-```
-
----
+List all saved/named wallets.
 
 ## wallet import
 
-Import and store a keypair file.
-
-**Description:** Imports a wallet from a keypair JSON file and saves it under the given name. Validates that the file contains a valid 64-byte secret key. The file path is restricted to the home directory and symlinks are resolved for security.
-
-**Syntax:**
+Import a keypair JSON file and save it with a name for quick switching.
 
 ```bash
-wallet import <name> <path>
+wallet import <path>
 ```
-
-**Example:**
-
-```bash
-wallet import main ~/wallets/my-wallet.json
-```
-
----
 
 ## wallet use
 
-Switch to a saved wallet.
-
-**Description:** Activates a previously imported wallet by name.
-
-**Syntax:**
+Switch to a previously saved wallet by name.
 
 ```bash
 wallet use <name>
 ```
 
-**Example:**
-
-```bash
-wallet use main
-```
-
----
-
 ## wallet connect
 
-Connect a wallet file directly.
-
-**Description:** Connects a keypair file for the current session only. The wallet is not saved to `~/.flash/wallets/`.
-
-**Syntax:**
+Load a keypair directly from file path (without saving).
 
 ```bash
 wallet connect <path>
 ```
 
-**Example:**
-
-```bash
-wallet connect ~/my-keypair.json
-```
-
----
-
 ## wallet disconnect
 
-Disconnect the active wallet.
-
-**Description:** Disconnects the currently connected wallet and zeros the secret key bytes in memory.
-
-**Syntax:**
-
-```bash
-wallet disconnect
-```
-
----
+Disconnect the active wallet. Zeros the secret key from memory.
 
 ## wallet address
 
-Show wallet public key.
+Display the current wallet's public address (hidden from help).
 
-**Description:** Displays the base58-encoded public key of the connected wallet.
+## wallet remove
 
-**Syntax:**
-
-```bash
-wallet address
-```
+Remove a saved wallet by name (does not delete the keypair file).

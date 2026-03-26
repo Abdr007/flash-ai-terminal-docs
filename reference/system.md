@@ -1,146 +1,131 @@
 # System Commands
 
+## help
+
+List all available commands with descriptions.
+
+**Aliases:** `commands`, `?`
+
+## doctor
+
+Run full system diagnostics: RPC health, wallet status, configuration validation, oracle feed checks.
+
+**Aliases:** `flash doctor`, `health`, `flash health`
+
 ## system status
 
-Show system health information.
-
-**Description:** Displays build version, RPC provider, latency, wallet connection state, simulation/live mode, and session uptime.
-
-**Syntax:**
-
-```bash
-system status
-```
+System health overview: connection state, active mode, uptime.
 
 **Aliases:** `system`
 
----
+## system metrics
+
+Full runtime metrics: memory usage, uptime, cache sizes, event loop stats.
+
+**Aliases:** `sysmetrics`
+
+## system health
+
+Runtime health: event loop latency, memory pressure, GC stats.
+
+**Aliases:** `sys health`, `runtime`
+
+## system audit
+
+Verify protocol data integrity. Compares local state against on-chain truth.
 
 ## rpc status
 
-Show RPC endpoint health and latency.
-
-**Description:** Displays per-endpoint details including URL, latency, failure rate, slot lag, and active/inactive status.
-
-**Syntax:**
-
-```bash
-rpc status
-```
-
----
+Current RPC endpoint health: latency, slot height, slot lag.
 
 ## rpc test
 
-Run a full RPC diagnostic with scoring.
+Active connectivity test against all configured endpoints.
 
-**Description:** Tests connectivity, latency, slot freshness, and transaction simulation across all configured endpoints. Produces a health score.
+## rpc list
 
-**Syntax:**
+List all configured RPC endpoints.
+
+**Aliases:** `rpc ls`, `rpc endpoints`
+
+## rpc set
+
+Change the primary RPC endpoint.
 
 ```bash
-rpc test
+rpc set <url>
 ```
 
----
+## rpc add
+
+Add a backup RPC endpoint.
+
+```bash
+rpc add <url>
+```
+
+## rpc remove
+
+Remove an RPC endpoint.
+
+```bash
+rpc remove <url>
+```
 
 ## tx inspect
 
-Inspect a transaction on-chain.
-
-**Description:** Fetches and displays transaction details, program logs, and confirmation status for a given signature.
-
-**Syntax:**
+Inspect a transaction by signature.
 
 ```bash
 tx inspect <signature>
 ```
 
-**Example:**
-
-```bash
-tx inspect 5K7x...abc
-```
-
----
-
 ## tx debug
 
-Debug a transaction with protocol context.
-
-**Description:** Fetches transaction details and provides protocol-level context including program errors, instruction breakdown, and Flash Trade error code mapping.
-
-**Syntax:**
+Debug a failed transaction.
 
 ```bash
 tx debug <signature>
 ```
 
-**Example:**
+## tx metrics
 
-```bash
-tx debug 5K7x...abc
-```
+Transaction engine performance stats: success rate, average confirm time, retry rate.
 
----
+**Aliases:** `tx stats`, `tx perf`, `tx engine`
 
-## doctor
+## update
 
-Run a full system diagnostic.
+Check for Flash Terminal updates.
 
-**Description:** Checks RPC connectivity, wallet state, build integrity, and all subsystem health. Reports issues and suggested fixes.
+**Aliases:** `flash update`
 
-**Syntax:**
+## config
 
-```bash
-doctor
-```
-
-**Aliases:** `flash doctor`
-
----
+Show all active configuration values and their sources.
 
 ## degen
 
-Toggle degen mode.
+Toggle degen mode (higher per-market leverage limits).
 
-**Description:** Enables or disables degen mode, which unlocks 500x leverage on SOL, BTC, and ETH markets.
+**Aliases:** `degen on`, `degen off`
 
-**Syntax:**
+## engine status
 
-```bash
-degen on
-degen off
-```
+Show execution engine info (hidden from help).
 
----
+**Aliases:** `engine`
 
-## help
+## benchmark engine
 
-List all available commands.
+Benchmark execution engines (hidden from help).
 
-**Description:** Displays every available command with a brief description.
+**Aliases:** `engine benchmark`
 
-**Syntax:**
+## clear
 
-```bash
-help
-```
-
-**Aliases:** `commands`, `?`
-
----
+Clear the terminal screen.
 
 ## exit
 
-Clean shutdown.
-
-**Description:** Gracefully stops all subsystems in order: status bar, risk monitor, reconciler, plugins, and RPC manager. Returns to the shell.
-
-**Syntax:**
-
-```bash
-exit
-```
-
-**Aliases:** `quit`
+Quit Flash Terminal.

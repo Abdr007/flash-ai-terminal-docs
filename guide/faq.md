@@ -4,90 +4,84 @@
 
 ### What is Flash Terminal?
 
-A command-line tool for trading perpetual futures on [Flash Trade](https://www.flash.trade/), a Solana-based derivatives protocol. You type commands, it executes trades.
+A command-line tool for trading perpetual futures on [Flash Trade](https://www.flash.trade/), a Solana derivatives protocol. 100+ commands covering trading, earn, analytics, and protocol inspection.
 
-### Is this safe to use?
+### Is this safe?
 
-Yes. Flash Terminal has 10 independent safety layers protecting every live trade:
-
-- Every trade shows a full preview before signing
-- You must type `yes` to confirm
-- Rate limits prevent accidental rapid-fire trades
-- Circuit breakers halt trading if losses exceed your limits
-- Simulation mode lets you practice with zero risk
-
-See [Risk & Safety](/guide/risk-safety) for the full breakdown.
+Yes. 10 independent safety layers protect every live trade — trade confirmation, signing guard, rate limiter, circuit breaker, kill switch, exposure control, pre-flight simulation, program whitelist, instruction freeze, and trade mutex. See [Risk & Safety](/guide/risk-safety).
 
 ### Do I need money to try it?
 
-No. Simulation mode is free and uses virtual USDC with real market prices. No wallet, no funds, no account needed.
+No. Simulation mode (the default) uses virtual USDC with real market prices. No wallet, no funds, no account.
 
-### What networks are supported?
+### What network does it support?
 
-**Solana mainnet only.** Flash Trade operates exclusively on Solana mainnet-beta.
+Solana mainnet-beta only. Flash Trade operates exclusively on Solana.
 
 ### What assets can I trade?
 
-32+ assets across crypto, stocks, commodities, forex, governance tokens, and memecoins. Run `markets` inside the terminal to see the full list.
-
-### Is there a GUI version?
-
-No. Flash Terminal is CLI-only by design. For a web interface, use [flash.trade](https://www.flash.trade/).
+32+ assets: crypto (SOL, BTC, ETH), equities (NVDA, TSLA, SPY), commodities (Gold, Oil), forex (EUR, GBP), governance tokens (JUP, PYTH), and memecoins (BONK, WIF). Run `markets` to see the full list.
 
 ---
 
 ## Setup
 
-### Do I need a wallet for simulation mode?
+### Do I need a wallet for simulation?
 
-No. Simulation mode works without any wallet. Just install and run `flash`.
+No. Just install and run `flash`.
 
-### What kind of wallet file do I need?
+### What wallet format is supported?
 
-A Solana keypair JSON file — an array of numbers like `[45,12,198,...]`. This is the standard format created by `solana-keygen new`.
+Solana keypair JSON file — an array of numbers like `[45,12,198,...]`. Standard format from `solana-keygen new`.
 
-### Can I use a hardware wallet (Ledger)?
+### Can I use a Ledger hardware wallet?
 
-No. Flash Terminal currently requires a file-based keypair. Use a dedicated software wallet for trading.
+Not currently. Flash Terminal requires a file-based keypair.
 
-### Which RPC provider should I use?
+### Which RPC should I use?
 
-- **For simulation:** The default public RPC is fine
-- **For live trading:** Use a paid provider like [Helius](https://helius.dev/) or [Triton](https://triton.one/) for better reliability
+- **Simulation:** Default public RPC is fine
+- **Live trading:** Use a paid provider like [Helius](https://helius.dev/) or [Triton](https://triton.one/)
 
-### How do I update to the latest version?
+### How do I update?
 
 ```bash
 npm update -g flash-terminal
+# or inside the terminal:
+update
 ```
 
 ---
 
 ## Trading
 
-### What is the minimum trade size?
+### What's the minimum trade size?
 
-The minimum depends on the market and pool, but typically around $10 USDC collateral.
+~$10 USDC collateral, depending on the market.
 
-### How much SOL do I need for transaction fees?
+### How much SOL do I need for fees?
 
-About 0.005-0.01 SOL per trade. Keep at least 0.1 SOL in your wallet for fees.
+~0.005-0.01 SOL per trade. Keep at least 0.1 SOL.
 
-### Can I have multiple positions on the same asset?
+### Can I have two positions on the same asset?
 
-You can have one **long** and one **short** position on the same asset, but not two positions on the same side. Flash Trade rejects duplicates.
+One long and one short — yes. Two longs or two shorts on the same market — no. Flash Trade rejects duplicates.
 
 ### What happens if I get liquidated?
 
-Your position is closed automatically and your collateral for that position is lost. Other positions are not affected. See [Trading Guide](/guide/trading-guide#what-is-liquidation) for details.
+Your position is closed and its collateral is lost. Other positions are unaffected. See [Trading Guide](/guide/trading-guide#liquidation).
 
 ### Are TP/SL orders on-chain?
 
-Yes. Take-profit and stop-loss orders are placed on the Flash Trade protocol. They survive terminal shutdown and are visible on [flash.trade](https://www.flash.trade/).
+In live mode, yes. They're placed on the Flash Trade protocol and survive terminal shutdown.
 
-### Can I trade after the terminal is closed?
+### What happens to positions if I close the terminal?
 
-Your existing positions and on-chain orders (TP/SL, limit orders) remain active. You can manage them from the Flash Trade website or restart Flash Terminal.
+Live positions and on-chain orders (TP/SL, limits) persist. Manage them from [flash.trade](https://www.flash.trade/) or restart the terminal.
+
+### What is degen mode?
+
+`degen on` unlocks higher per-market leverage limits (e.g., 200x on SOL instead of 100x). Use `degen off` to restore defaults. Markets must support degen mode for this to have effect.
 
 ---
 
@@ -95,19 +89,15 @@ Your existing positions and on-chain orders (TP/SL, limit orders) remain active.
 
 ### Are simulation prices real?
 
-Yes. Simulation uses live [Pyth oracle](https://pyth.network/) prices — the same feeds used by Flash Trade for real trades.
+Yes. Same Pyth oracle feeds used for live Flash Trade execution.
 
-### Are simulation fees accurate?
+### Can I switch from sim to live mid-session?
 
-Approximately. Simulation uses 0.08% (8 bps) fee rate, which is typical for Flash Trade. Live mode reads the exact fee from on-chain data, which may vary slightly by market.
-
-### Can I switch from simulation to live mid-session?
-
-No. The mode is locked when the terminal starts. Close the terminal, set `SIMULATION_MODE=false` in `.env`, and restart.
+No. Mode is locked at startup. Exit, change `SIMULATION_MODE=false`, restart.
 
 ### Where is simulation data stored?
 
-In memory. If the terminal crashes, simulation state may be lost.
+In memory. Terminal crash = state lost.
 
 ---
 
@@ -115,55 +105,45 @@ In memory. If the terminal crashes, simulation state may be lost.
 
 ### Is my private key safe?
 
-Flash Terminal reads your keypair file locally and never sends it anywhere. When you disconnect (`wallet disconnect`), the key is zeroed from memory.
-
-Additional protections:
-- API keys are scrubbed from log files
-- Wallet import validates file paths (no arbitrary file reads)
-- RPC URLs are validated (must be HTTPS)
-- All signing goes through a signing guard with audit logging
+Flash Terminal reads the keypair file locally and never sends it over the network. On `wallet disconnect`, the key is zeroed from memory. API keys are scrubbed from all log files.
 
 ### Does Flash Terminal phone home?
 
-No. Flash Terminal only communicates with:
+No. It only communicates with:
 - Your configured Solana RPC endpoint
-- Pyth Hermes (for oracle prices)
-- Flash Trade fstats API (for analytics)
-- CoinGecko (for market data)
-- Your AI provider (if configured, for NL queries only)
+- Pyth Hermes (oracle prices)
+- Flash Trade fstats API (analytics)
+- CoinGecko (market data)
+- Your AI provider (if configured, for NL queries only — never trades)
 
-### Where are trade logs stored?
+### Where are logs?
 
-`~/.flash/signing-audit.log` — Records every trade attempt with timestamp, market, side, and result. Never contains private keys or sensitive data.
+- **Signing audit:** `~/.flash/signing-audit.log` — every trade attempt, no keys
+- **Application:** configured via `LOG_FILE` env var
+
+Both rotate at 10MB.
 
 ---
 
-## Troubleshooting
+## Platform
 
-### Why is the terminal slow?
+### Does it work on Windows?
 
-Usually the RPC endpoint. Try:
-1. `rpc status` to check latency
-2. Switch to a faster/paid RPC provider
-3. Check your internet connection
+Yes — via WSL, native Node.js, or Docker.
 
-### Why do I see "circuit breaker active"?
+### Does it work on Linux?
 
-Your cumulative losses exceeded `MAX_SESSION_LOSS_USD` or `MAX_DAILY_LOSS_USD`. Restart the terminal to reset. See [Troubleshooting](/guide/troubleshooting#circuit-breaker-tripped).
+Yes. Any system with Node.js v20+.
 
-### Can I run Flash Terminal on Windows?
+### Is there a GUI?
 
-Yes, via WSL (Windows Subsystem for Linux), or natively with Node.js for Windows. Docker also works.
-
-### How do I report a bug?
-
-Open an issue on [GitHub](https://github.com/Abdr007/flash-terminal/issues).
+No. Flash Terminal is CLI-only. For a web UI, use [flash.trade](https://www.flash.trade/).
 
 ---
 
 ## Still Have Questions?
 
-- Read the [Basic Commands](/guide/basic-commands) guide
 - Run `help` inside Flash Terminal
 - Check [Troubleshooting](/guide/troubleshooting)
-- Open a [GitHub issue](https://github.com/Abdr007/flash-terminal/issues)
+- Run `doctor` for diagnostics
+- Open a [GitHub issue](https://github.com/AustinJ712/flash-terminal/issues)

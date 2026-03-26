@@ -2,103 +2,73 @@
 
 Your first trade in under 2 minutes. No wallet needed.
 
-## Step 1: Install
-
-Make sure you have [Node.js](https://nodejs.org/) v20 or higher installed.
-
-```bash
-node --version
-# Should show v20.x.x or higher
-```
-
-Then install Flash Terminal:
+## 1. Install
 
 ```bash
 npm install -g flash-terminal
 ```
 
-## Step 2: Launch
+Requires [Node.js](https://nodejs.org/) v20+. Check with `node --version`.
+
+## 2. Launch
 
 ```bash
 flash
 ```
 
-You'll see a mode selection screen:
-
-```
-┌─────────────────────────────────────┐
-│  Flash Terminal                     │
-│                                     │
-│  Select mode:                       │
-│  1. Simulation (paper trading)      │
-│  2. Live (real transactions)        │
-│                                     │
-└─────────────────────────────────────┘
-```
-
-Choose **1** (Simulation). Your prompt will look like this:
+Select **Simulation** mode. Your prompt shows:
 
 ```
 flash [sim] >
 ```
 
-## Step 3: Your First Trade
+## 3. Open a Trade
 
-Open a 2x long position on SOL with $100:
-
-```
+```bash
 flash [sim] > open 2x long SOL $100
 ```
 
-You'll see a trade preview showing entry price, estimated fees, and liquidation price. Type `yes` to confirm.
+This opens a **long position** on SOL with **$100 collateral** at **2x leverage** ($200 position size).
 
-## Step 4: Check Your Position
+You'll see a trade preview with entry price, estimated fees, and liquidation price. Confirm with `yes`.
 
-```
+## 4. Check Your Position
+
+```bash
 flash [sim] > positions
 ```
 
 ```
-┌─────────┬──────┬─────┬──────────┬────────────┬──────────┬──────────┬─────────┬────────┬───────────┐
-│ Market  │ Side │ Lev │ Size     │ Collateral │ Entry    │ Mark     │ PnL     │ Fees   │ Liq Price │
-├─────────┼──────┼─────┼──────────┼────────────┼──────────┼──────────┼─────────┼────────┼───────────┤
-│ SOL     │ LONG │ 2x  │ $200.00  │ $100.00    │ $142.50  │ $143.10  │ +$0.84  │ $0.16  │ $71.96    │
-└─────────┴──────┴─────┴──────────┴────────────┴──────────┴──────────┴─────────┴────────┴───────────┘
+  SOL  LONG  2x  $200.00  $100.00  $148.52  $149.10  +$0.78  $0.16  $75.02
 ```
 
-## Step 5: Close the Trade
+Shows: Market, Side, Leverage, Size, Collateral, Entry, Mark Price, PnL, Fees, Liquidation Price.
 
-```
+## 5. Close It
+
+```bash
 flash [sim] > close SOL long
 ```
 
-Done. You just made your first trade.
+Done. Your PnL is realized and your collateral is returned.
 
-## What You Can Try Next
+## Try More
 
 ```bash
-# Check your portfolio
-flash [sim] > portfolio
-
-# See all available markets
-flash [sim] > markets
-
-# Get the price of Bitcoin
-flash [sim] > price BTC
-
-# Open a short position
-flash [sim] > open 3x short ETH $50
-
-# View trade history
-flash [sim] > history
-
-# Get help
-flash [sim] > help
+price SOL                   # Current SOL price
+prices                      # All asset prices
+markets                     # Available markets
+portfolio                   # Full portfolio view
+open 3x short ETH $50      # Short ETH
+history                     # Trade history
+help                        # All commands
 ```
 
-## Ready for More?
+## Next Steps
 
-- [Basic Commands](/guide/basic-commands) — Full list of everything you can do
-- [Trading Guide](/guide/trading-guide) — Understand leverage, PnL, and liquidation
-- [Wallet Setup](/guide/wallet-setup) — Set up a real wallet for live trading
-- [Configuration](/guide/configuration) — Customize your `.env` settings
+| What | Where |
+|:-----|:------|
+| All commands | [Commands](/guide/commands) |
+| Understand leverage & PnL | [Trading Guide](/guide/trading-guide) |
+| Set up a real wallet | [Wallet Setup](/guide/wallet-setup) |
+| Configure your terminal | [Configuration](/guide/configuration) |

@@ -2,117 +2,90 @@
 
 ## What is RPC?
 
-RPC (Remote Procedure Call) is how Flash Terminal talks to the Solana blockchain. It's a URL that connects you to a Solana node.
+RPC (Remote Procedure Call) is how Flash Terminal talks to the Solana blockchain. It's a URL pointing to a Solana node that processes your requests — fetching prices, checking balances, and sending transactions.
 
-Think of it like a phone number for the blockchain. You need one to:
+## Method 1 — Default (No Setup)
 
-- Get current prices and positions
-- Send trade transactions
-- Check your wallet balance
+Flash Terminal connects to Solana's public RPC automatically:
 
-## Default RPC
+```
+https://api.mainnet-beta.solana.com
+```
 
-Flash Terminal uses Solana's public RPC by default:
+This works for simulation and light use. No configuration needed.
+
+## Method 2 — Custom RPC
+
+Set your own endpoint in `.env`:
 
 ```bash
 RPC_URL=https://api.mainnet-beta.solana.com
 ```
 
-This works for getting started, but has limitations:
+Any Solana mainnet RPC endpoint works. Must use HTTPS (except localhost).
 
-| Feature | Public RPC | Paid RPC |
-|:--------|:-----------|:---------|
-| **Cost** | Free | $20-100+/month |
-| **Rate limits** | Strict (may get blocked) | High or unlimited |
-| **Speed** | Variable | Consistently fast |
-| **Reliability** | May drop transactions | High uptime guarantee |
-| **Best for** | Simulation, testing | Live trading |
+## Method 3 — Paid RPC (Recommended for Live Trading)
 
-## Setting Your RPC
+Public RPC has rate limits and variable latency. For reliable live trading, use a dedicated provider:
 
-Add the URL to your `.env` file:
+| Provider | Link | Notes |
+|:---------|:-----|:------|
+| **Helius** | [helius.dev](https://helius.dev/) | Free tier available |
+| **Triton** | [triton.one](https://triton.one/) | High performance |
+| **QuickNode** | [quicknode.com](https://quicknode.com/) | Enterprise option |
 
-```bash
-RPC_URL=https://api.mainnet-beta.solana.com
-```
-
-## When to Use a Paid RPC
-
-Use a paid RPC if you:
-
-- **Trade live** — Your transactions need to land reliably
-- **Trade frequently** — Public RPC rate limits will block you
-- **Need speed** — Lower latency = faster execution
-
-### Recommended Providers
-
-| Provider | Link |
-|:---------|:-----|
-| **Helius** | [helius.dev](https://helius.dev/) |
-| **Triton** | [triton.one](https://triton.one/) |
-| **QuickNode** | [quicknode.com](https://quicknode.com/) |
-
-Sign up, get your endpoint URL, and paste it in your `.env`:
-
-```bash
-RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY
-```
-
-## Backup RPC (Optional)
-
-For extra reliability, add backup endpoints. Flash Terminal will automatically switch to a backup if your primary goes down:
+Sign up, get your endpoint, add to `.env`:
 
 ```bash
 RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_KEY
-BACKUP_RPC_1=https://your-backup-endpoint.com
+```
+
+### Why Paid RPC Matters
+
+| | Public | Paid |
+|:--|:-------|:-----|
+| **Rate limits** | Strict | High/unlimited |
+| **Latency** | Variable (100-500ms) | Consistent (20-80ms) |
+| **Transaction landing** | Unreliable under load | Reliable |
+| **Best for** | Simulation | Live trading |
+
+## Backup RPC (Failover)
+
+Add backup endpoints for automatic failover:
+
+```bash
+RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_KEY
+BACKUP_RPC_1=https://your-backup.com
 BACKUP_RPC_2=https://api.mainnet-beta.solana.com
 ```
 
-### How Failover Works
+Flash Terminal monitors health every 30 seconds and switches to a backup when:
 
-Flash Terminal checks RPC health every 30 seconds. It switches to a backup when:
+- Primary stops responding
+- Latency exceeds threshold
+- Slot lag exceeds 50 slots
 
-- The primary endpoint stops responding
-- Latency exceeds 5 seconds
-- Slot lag exceeds 50 slots behind
+When primary recovers, it switches back automatically.
 
-When the primary recovers, it switches back automatically.
-
-## Checking RPC Status
-
-Inside Flash Terminal:
+## Checking RPC Health
 
 ```bash
-# See current RPC health
-flash > rpc status
-
-# Test all configured endpoints
-flash > rpc test
-
-# Run full system diagnostics
-flash > doctor
+rpc status        # Current endpoint health + latency
+rpc test          # Test all configured endpoints
+rpc list          # List all configured endpoints
+doctor            # Full system diagnostics including RPC
 ```
 
-Example output from `rpc status`:
+## Managing Endpoints at Runtime
 
+```bash
+rpc set <url>       # Change primary endpoint
+rpc add <url>       # Add a backup endpoint
+rpc remove <url>    # Remove an endpoint
 ```
-RPC Status
-──────────────────────────
-  Primary:   https://mainnet.helius-rpc.com/...
-  Status:    Connected
-  Latency:   45ms
-  Slot:      298,451,234
-  Lag:       0 slots
-```
-
-## Important Notes
-
-- RPC URLs must use **HTTPS** (HTTP is only allowed for `localhost`)
-- Keep your API key private — don't share your RPC URL publicly
-- For simulation mode, the public RPC is usually fine
 
 ## Next Steps
 
-- [Configuration](/guide/configuration) — All `.env` variables explained
+- [Configuration](/guide/configuration) — Full `.env` reference
 - [Wallet Setup](/guide/wallet-setup) — Set up your wallet
-- [Quick Start](/guide/quick-start) — Start trading
+- [Troubleshooting](/guide/troubleshooting) — Fix connection issues

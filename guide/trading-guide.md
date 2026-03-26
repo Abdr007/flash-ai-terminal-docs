@@ -1,202 +1,166 @@
 # Trading Guide
 
-This guide explains how trading works in Flash Terminal. No prior trading experience needed.
+How trading works in Flash Terminal. No prior trading experience needed.
 
-## How Trading Works
+## The Basics
 
-When you trade on Flash Terminal, you're trading **perpetual futures** — a type of contract that lets you bet on whether an asset's price will go up or down.
-
-You don't buy or sell the actual asset. Instead, you open a **position** that tracks the price.
+You're trading **perpetual futures** — contracts that track an asset's price. You don't buy the actual asset. You open a **position** that profits or loses as the price moves.
 
 ## Long vs Short
-
-There are two directions:
 
 **Long** — You profit when the price goes **up**.
 
 ```bash
 open 2x long SOL $100
-# If SOL goes from $140 to $154 (+10%), you profit
+# SOL at $140. If it rises to $154 (+10%), you profit.
 ```
 
 **Short** — You profit when the price goes **down**.
 
 ```bash
 open 2x short SOL $100
-# If SOL goes from $140 to $126 (-10%), you profit
+# SOL at $140. If it drops to $126 (-10%), you profit.
 ```
 
-## What is Leverage?
+## Leverage
 
-Leverage multiplies your position size relative to your collateral.
+Leverage multiplies your exposure relative to your collateral.
 
 ```
 Position Size = Collateral x Leverage
 ```
 
-**Example:**
+| Collateral | Leverage | Position Size | 10% price move = |
+|:-----------|:---------|:--------------|:-----------------|
+| $100 | 1x | $100 | $10 profit/loss |
+| $100 | 2x | $200 | $20 profit/loss |
+| $100 | 5x | $500 | $50 profit/loss |
+| $100 | 10x | $1,000 | $100 profit/loss |
 
-| Collateral | Leverage | Position Size |
-|:-----------|:---------|:--------------|
-| $100 | 1x | $100 |
-| $100 | 2x | $200 |
-| $100 | 5x | $500 |
-| $100 | 10x | $1,000 |
-
-Higher leverage = bigger profits **and** bigger losses.
-
-**With 2x leverage and $100 collateral:**
-- SOL goes up 10% → you gain **$20** (20% return)
-- SOL goes down 10% → you lose **$20** (20% loss)
-
-**With 10x leverage and $100 collateral:**
-- SOL goes up 10% → you gain **$100** (100% return)
-- SOL goes down 10% → you lose **$100** (100% loss = liquidated)
-
-::: warning HIGHER LEVERAGE = HIGHER RISK
-At 10x leverage, a 10% move against you wipes out your entire collateral. Start with 2x or 3x until you're comfortable.
+::: warning
+At 10x leverage, a 10% move against you = 100% loss (liquidation). Start with 2-3x.
 :::
 
-## What is Collateral?
+Default leverage is **2x** (configurable via `DEFAULT_LEVERAGE` in `.env`).
 
-Collateral is the USDC you put up as margin for a position. It determines your **maximum loss** on that trade (excluding fees).
+## Collateral
 
-You can adjust collateral on open positions:
+Collateral is the USDC you put up as margin. It determines your maximum loss on that trade.
+
+Adjust collateral on open positions:
 
 ```bash
 add $50 to SOL long       # More collateral → lower leverage → safer
 remove $20 from SOL long  # Less collateral → higher leverage → riskier
 ```
 
-## Understanding PnL
+## PnL (Profit & Loss)
 
-PnL (Profit and Loss) shows how much money you're making or losing.
+**Long:** `PnL = (Mark Price - Entry Price) / Entry Price x Position Size`
 
-**For long positions:**
+**Short:** `PnL = (Entry Price - Mark Price) / Entry Price x Position Size`
 
-```
-PnL = (Current Price - Entry Price) / Entry Price x Position Size
-```
+**Example:** 2x long SOL at $140, $100 collateral ($200 position):
 
-**For short positions:**
-
-```
-PnL = (Entry Price - Current Price) / Entry Price x Position Size
-```
-
-**Example:** You open a 2x long SOL at $140 with $100 collateral ($200 position).
-
-| SOL Price | Price Change | PnL |
-|:----------|:-------------|:----|
-| $154 | +10% | +$20 |
-| $147 | +5% | +$10 |
-| $140 | 0% | $0 |
-| $133 | -5% | -$10 |
-| $126 | -10% | -$20 |
+| SOL Price | Change | PnL | Return on Collateral |
+|:----------|:-------|:----|:---------------------|
+| $154 | +10% | +$20 | +20% |
+| $147 | +5% | +$10 | +10% |
+| $140 | 0% | $0 | 0% |
+| $133 | -5% | -$10 | -10% |
+| $126 | -10% | -$20 | -20% |
 
 PnL is **unrealized** while the position is open. It becomes **realized** when you close.
 
-## What is Liquidation?
+## Liquidation
 
-Liquidation happens when your losses get too close to your collateral amount. The protocol closes your position automatically to protect the system.
+When losses approach your collateral, the protocol automatically closes your position.
 
-**How close is too close?** It depends on your leverage:
-
-| Leverage | Approximate Move to Liquidation |
-|:---------|:-------------------------------|
+| Leverage | Approx. Move to Liquidation |
+|:---------|:---------------------------|
 | 2x | ~50% against you |
 | 5x | ~20% against you |
 | 10x | ~10% against you |
 | 20x | ~5% against you |
 
-::: danger LIQUIDATION IS PERMANENT
-When liquidated, your position is closed and your collateral is lost. You cannot undo a liquidation.
+::: danger
+Liquidation is permanent. Your position is closed and collateral is lost.
 :::
 
-**How to avoid liquidation:**
-
-1. **Use lower leverage** — Gives you more room
-2. **Add collateral** — `add $50 to SOL long`
-3. **Set a stop-loss** — `set sl SOL long $130`
-4. **Monitor your positions** — `risk monitor on`
-
-Check how close you are to liquidation:
+**Avoid liquidation:**
 
 ```bash
-risk report
+add $50 to SOL long       # Add collateral
+set sl SOL long $130      # Set stop-loss
+risk report               # Check liquidation distances
 ```
 
 ## Fees
 
-Every trade has fees:
-
-| Fee | When | Typical Rate |
-|:----|:-----|:-------------|
-| **Open fee** | When you open a position | ~0.08% of position size |
-| **Close fee** | When you close a position | ~0.08% of position size |
+| Fee | When | Rate |
+|:----|:-----|:-----|
+| **Open fee** | Opening a position | ~0.08% of position size |
+| **Close fee** | Closing a position | ~0.08% of position size |
 | **Borrow fee** | While position is open | Variable, accrues over time |
 
-**Example:** Opening a $200 position costs about $0.16 in fees. Closing costs another $0.16. Total round-trip: ~$0.32.
+Example: $200 position → ~$0.16 open fee + ~$0.16 close fee = ~$0.32 round trip.
 
-Flash Terminal shows estimated fees in the trade preview before you confirm.
-
-## Available Markets
-
-Flash Terminal supports 32+ assets across multiple categories:
-
-| Category | Examples |
-|:---------|:---------|
-| **Crypto** | SOL, BTC, ETH, BNB |
-| **Stocks** | NVDA, TSLA, AAPL, AMD, AMZN, SPY |
-| **Commodities** | Gold (XAU), Silver (XAG), Crude Oil |
-| **Forex** | EUR, GBP, JPY, CNH |
-| **Governance** | JTO, JUP, PYTH, RAY |
-| **Memecoins** | BONK, WIF, PENGU, FARTCOIN |
-
-See all markets:
-
-```bash
-markets
-```
-
-Each market has its own leverage limits set by the protocol. Major assets like SOL and BTC allow up to 100x. Smaller tokens may be limited to 20-40x.
+Fees are shown in the trade preview before you confirm.
 
 ## Prices
 
-All prices come from [Pyth Network](https://pyth.network/) — the same oracle used by Flash Trade's on-chain program. Prices are validated for freshness and accuracy before use.
+All prices come from [Pyth Network](https://pyth.network/) oracles — the same feeds used by Flash Trade on-chain. Prices are validated for:
+
+- **Staleness** — Must be recent (< 30s)
+- **Confidence** — Must be within confidence interval
+- **Deviation** — Must not deviate excessively
 
 ```bash
-price SOL          # Current price with confidence interval
-monitor            # Live price table, updates every 5s
+price SOL          # Current price with confidence
 ```
 
-## Trade Confirmation
+## Trade Confirmation (Live Mode)
 
-In live mode, every trade shows a full preview before signing:
+Every live trade shows a full preview:
 
 ```
-CONFIRM TRANSACTION
-─────────────────────────────────
-  Market:      SOL LONG
+  Market:      SOL/USD LONG
   Leverage:    5x
   Collateral:  $500.00 USDC
   Size:        $2,500.00
   Est. Fee:    $2.00
   Wallet:      ABDR...7x4f
-
-  Risk Preview:
-    Est. Entry:   $148.52
-    Est. Liq:     $123.77
-    Distance:     16.7%
+  Est. Entry:  $148.52
+  Est. Liq:    $121.39
 
   Proceed? [y/N]
 ```
 
-You must type `yes` to confirm. There is no way to skip this.
+You must type `yes`. This cannot be bypassed.
+
+## Available Markets
+
+```bash
+markets
+```
+
+**Pools:**
+
+| Pool | Markets |
+|:-----|:--------|
+| Crypto.1 | SOL, BTC, ETH, ZEC, BNB |
+| Ondo.1 | SPY, NVDA, TSLA, AAPL, AMD, AMZN, PLTR |
+| Virtual.1 | XAU, XAG, CRUDEOIL, NATGAS, EUR, GBP, USDJPY, USDCNH |
+| Governance.1 | JTO, JUP, PYTH, RAY, HYPE, MET, KMNO |
+| Community.1 | PUMP, BONK, PENGU |
+| Community.2 | WIF |
+| Trump.1 | FARTCOIN |
+| Ore.1 | ORE |
+
+Each market has per-pool leverage limits set by the Flash Trade protocol.
 
 ## Next Steps
 
-- [Basic Commands](/guide/basic-commands) — Full command reference
-- [Simulation Mode](/guide/simulation) — Practice without risk
-- [Risk & Safety](/guide/risk-safety) — Understanding the safety systems
-- [Configuration](/guide/configuration) — Set trade limits and risk controls
+- [Commands](/guide/commands) — Full command reference
+- [Simulation Mode](/guide/simulation) — Practice risk-free
+- [Risk & Safety](/guide/risk-safety) — All safety systems explained

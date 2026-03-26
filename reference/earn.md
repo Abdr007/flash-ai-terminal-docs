@@ -4,367 +4,130 @@
 
 View all pools with live yield metrics.
 
-**Syntax:**
+**Aliases:** `earn status`, `earn pools`
 
-```
-earn
-```
+## earn add
 
-**Example:**
+Add liquidity to a pool.
 
 ```bash
-earn
+earn add $<amount> <pool>
 ```
 
-Displays a table of all available pools with current APY, TVL, utilization, and fee share.
+**Aliases:** `earn add-liquidity`
 
----
+## earn remove
 
-## earn info
-
-Detailed pool information.
-
-**Syntax:**
-
-```
-earn info <pool>
-```
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `pool` | string | Pool name (e.g., crypto, gold, defi, meme) |
-
-**Example:**
+Remove liquidity from a pool.
 
 ```bash
-earn info crypto
+earn remove <percent>% <pool>
 ```
 
-Shows TVL, APY breakdown, fee share percentage, supported assets, utilization rate, and pool composition.
-
----
+**Aliases:** `earn remove-liquidity`
 
 ## earn deposit
 
-Deposit USDC into a pool and mint FLP tokens.
+Deposit into a pool (same as `earn add`).
 
-**Syntax:**
-
-```
+```bash
 earn deposit $<amount> <pool>
 ```
 
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `amount` | number | USDC amount to deposit |
-| `pool` | string | Target pool name |
-
-**Example:**
-
-```bash
-earn deposit $1000 crypto
-earn deposit $500 gold
-```
-
-Mints FLP tokens proportional to your share of the pool. FLP auto-compounds trading fees.
-
----
-
 ## earn withdraw
 
-Burn FLP tokens and receive USDC back.
+Withdraw from a pool (same as `earn remove`).
 
-**Syntax:**
-
-```
+```bash
 earn withdraw <percent>% <pool>
 ```
 
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `percent` | number | Percentage of your FLP position to withdraw (1-100) |
-| `pool` | string | Pool to withdraw from |
-
-**Example:**
-
-```bash
-earn withdraw 50% crypto
-earn withdraw 100% gold
-```
-
----
-
 ## earn stake
 
-Stake FLP tokens for USDC rewards (converts FLP to sFLP).
+Stake FLP tokens for additional rewards.
 
-**Syntax:**
-
-```
+```bash
 earn stake $<amount> <pool>
 ```
 
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `amount` | number | USD value of FLP to stake |
-| `pool` | string | Pool whose FLP tokens to stake |
-
-**Example:**
-
-```bash
-earn stake $500 crypto
-```
-
-Staked FLP (sFLP) earns USDC rewards paid hourly instead of auto-compounding.
-
----
+**Aliases:** `earn stake-flp`
 
 ## earn unstake
 
-Unstake sFLP tokens back to FLP.
+Unstake FLP tokens.
 
-**Syntax:**
-
-```
+```bash
 earn unstake <percent>% <pool>
 ```
 
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `percent` | number | Percentage of sFLP to unstake (1-100) |
-| `pool` | string | Pool whose sFLP tokens to unstake |
-
-**Example:**
-
-```bash
-earn unstake 100% crypto
-```
-
----
+**Aliases:** `earn unstake-flp`
 
 ## earn claim
 
-Claim pending LP and staking USDC rewards.
+Claim all LP and staking rewards.
 
-**Syntax:**
+**Aliases:** `earn claim-rewards`, `earn claim rewards`
 
-```
-earn claim
-```
+## earn info
 
-**Example:**
+Detailed information on a specific pool.
 
 ```bash
-earn claim
+earn info <pool>
 ```
-
-Claims all accumulated USDC rewards from sFLP staking across all pools.
-
----
 
 ## earn positions
 
-View active LP positions across all pools.
+View your LP positions across all pools.
 
-**Syntax:**
-
-```
-earn positions
-```
-
-**Example:**
-
-```bash
-earn positions
-```
-
-Shows FLP and sFLP balances, USD value, pool share percentage, and accumulated rewards per pool.
-
----
+**Aliases:** `earn pos`
 
 ## earn best
 
-Rank pools by yield and risk.
-
-**Syntax:**
-
-```
-earn best
-```
-
-**Example:**
-
-```bash
-earn best
-```
-
-Displays pools sorted by risk-adjusted yield, factoring in APY, utilization, TVL depth, and historical volatility.
-
----
-
-## earn simulate
-
-Project yield returns for a deposit amount and pool.
-
-**Syntax:**
-
-```
-earn simulate $<amount> <pool>
-```
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `amount` | number | Hypothetical USDC deposit amount |
-| `pool` | string | Target pool |
-
-**Example:**
-
-```bash
-earn simulate $5000 crypto
-earn simulate $1000 defi
-```
-
-Projects estimated returns at 7d, 30d, 90d, and 1y horizons based on current APY.
-
----
+Rank pools by yield and risk score.
 
 ## earn dashboard
 
-Liquidity portfolio overview.
+Full liquidity portfolio overview.
 
-**Syntax:**
-
-```
-earn dashboard
-```
-
-**Example:**
-
-```bash
-earn dashboard
-```
-
-Consolidated view of all LP positions, total value, aggregate yield, reward claims, and pool allocation breakdown.
-
----
+**Aliases:** `earn dash`
 
 ## earn pnl
 
-Earn profit and loss tracking.
+Earn P&L tracking over time.
 
-**Syntax:**
+**Aliases:** `earn profit`, `earn performance`
 
-```
-earn pnl
-```
+## earn simulate
 
-**Example:**
+Project yield for a hypothetical deposit.
 
 ```bash
-earn pnl
+earn simulate $<amount> <pool>
 ```
-
-Shows realized and unrealized PnL from liquidity provision, including fees earned, impermanent loss, and net returns.
-
----
 
 ## earn demand
 
-Liquidity demand analysis.
+Liquidity demand and utilization analysis.
 
-**Syntax:**
-
-```
-earn demand
-```
-
-**Example:**
-
-```bash
-earn demand
-```
-
-Analyzes current trading volume, open interest, and utilization to identify pools with highest liquidity demand.
-
----
+**Aliases:** `earn utilization`
 
 ## earn history
 
-Historical APY data for a pool.
+Historical performance for a pool.
 
-**Syntax:**
-
-```
+```bash
 earn history <pool>
 ```
 
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `pool` | string | Pool name |
-
-**Example:**
-
-```bash
-earn history crypto
-earn history meme
-```
-
-Shows historical APY over 7d, 30d, and 90d periods.
-
----
-
 ## earn rotate
 
-Suggest liquidity rotation between pools.
+Suggest optimal liquidity rotation between pools.
 
-**Syntax:**
+**Aliases:** `earn optimize`, `earn rebalance`
 
-```
-earn rotate
-```
+## earn integrations
 
-**Example:**
+FLP integration partners.
 
-```bash
-earn rotate
-```
-
-Analyzes yield trends and suggests rebalancing LP across pools for optimal risk-adjusted returns.
-
----
-
-## Available Pools
-
-| Pool | Pool ID | Assets |
-|------|---------|--------|
-| crypto | Crypto.1 | SOL, BTC, ETH |
-| gold | Virtual.1 | XAU, XAG, EUR, GBP, CRUDEOIL, USDJPY, USDCNH |
-| defi | Governance.1 | JUP, PYTH, JTO, RAY, KMNO, MET, HYPE |
-| meme | Community.1 | BONK, PENGU, PUMP |
-| wif | Community.2 | WIF |
-| fart | Trump.1 | FARTCOIN |
-| ore | Ore.1 | ORE |
-| equity | Equity.1 | SPY, NVDA, TSLA, AAPL, AMD, AMZN |
-
-## FLP vs sFLP
-
-| Token | Behavior | Rewards |
-|-------|----------|---------|
-| **FLP** | Liquidity provider token | Auto-compounds — trading fees are reinvested into the pool, increasing FLP value over time |
-| **sFLP** | Staked FLP | Pays USDC rewards hourly — claim manually with `earn claim` |
-
-Deposit USDC to receive FLP. Stake FLP to convert to sFLP. Unstake sFLP to get FLP back. Withdraw FLP to receive USDC.
+**Aliases:** `earn partners`

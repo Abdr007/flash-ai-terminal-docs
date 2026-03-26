@@ -1,96 +1,95 @@
 # Architecture
 
-Flash Terminal is built as isolated layers with strict downward communication. The risk layer sits between every decision and every transaction — no bypass path exists. Market data flows up through caches, execution flows down through safety gates.
+Flash Terminal is built as isolated layers with strict downward communication. The risk layer sits between every command and every transaction — no bypass path exists.
 
-## System Architecture
+## System Overview
 
-```mermaid
-graph TB
-    subgraph INTERFACE["&nbsp; INTERFACE &nbsp;"]
-        CLI["CLI REPL"]
-        NLP["AI Interpreter<br/><sub>regex primary · NLP fallback</sub>"]
-    end
-
-    subgraph RISK["&nbsp; RISK & SAFETY &nbsp;"]
-        direction LR
-        GUARD["Signing Guard<br/><sub>limits · rate limiter</sub>"]
-        CB["Circuit Breaker<br/><sub>session · daily loss</sub>"]
-        KILL["Kill Switch<br/><sub>master toggle</sub>"]
-        EXPOSURE["Exposure Control<br/><sub>portfolio cap</sub>"]
-    end
-
-    subgraph EXECUTION["&nbsp; EXECUTION ENGINE &nbsp;"]
-        ORDER["Order Engine<br/><sub>limit · market · TP/SL</sub>"]
-        TX["TX Builder<br/><sub>cached blockhash · dynamic CU</sub>"]
-        SIM["Pre-flight Simulation<br/><sub>on-chain verify before broadcast</sub>"]
-    end
-
-    subgraph DATA["&nbsp; DATA & INFRASTRUCTURE &nbsp;"]
-        direction LR
-        CLIENT["Flash SDK<br/><sub>FlashClient · SimClient</sub>"]
-        RPC["RPC Manager<br/><sub>failover · slot lag · TPU</sub>"]
-        PYTH["Pyth Hermes<br/><sub>oracle feeds · 5s cache</sub>"]
-        CACHE["State Cache<br/><sub>positions · balances · 30s TTL</sub>"]
-    end
-
-    subgraph CHAIN["&nbsp; SOLANA &nbsp;"]
-        FLASH["Flash Trade Program"]
-        SOL["Solana Network"]
-    end
-
-    CLI --> NLP
-    NLP --> GUARD
-
-    GUARD --> CB
-    CB --> KILL
-    KILL --> EXPOSURE
-    EXPOSURE -->|"approved"| ORDER
-
-    ORDER --> TX
-    TX --> SIM
-    SIM -->|"on-chain execution"| CLIENT
-
-    CLIENT --> RPC
-    RPC --> FLASH
-    FLASH --> SOL
-
-    SOL -.->|"confirmation + state"| CACHE
-
-    style RISK fill:#1a1a2e,stroke:#e94560,stroke-width:2px,color:#fff
-    style EXECUTION fill:#1a1a2e,stroke:#16213e,stroke-width:2px,color:#fff
-    style CHAIN fill:#1a1a2e,stroke:#9945FF,stroke-width:2px,color:#fff
+```
+CLI REPL
+  └─ Command Registry (100+ commands, O(1) dispatch)
+      └─ Parser (regex primary, fuzzy correction, NL fallback)
+          └─ Tool Engine (unified dispatch to all tool categories)
+              ├─ Signing Guard → Rate Limiter → Circuit Breaker → Kill Switch → Exposure
+              │   └─ TX Builder (MessageV0, dynamic CU, cached blockhash)
+              │       └─ Pre-flight Simulation
+              │           └─ Broadcast (maxRetries:3, HTTP confirm, rebroadcast)
+              │               └─ Flash Trade Program (Solana)
+              ├─ Portfolio Tools (positions, PnL, risk, exposure)
+              ├─ Analytics Tools (volume, OI, leaderboard, whales)
+              ├─ Earn Tools (liquidity, staking, FLP, FAF)
+              ├─ Protocol Tools (inspect, health, audit)
+              └─ Wallet Tools (connect, import, switch, balances)
 ```
 
-## Layer Breakdown
+## Command Flow
 
-**Interface.** The CLI REPL (`src/cli/terminal.ts`) accepts user input and routes it through a three-tier parser: fast dispatch for single-token commands, regex patterns for structured commands, and LLM fallback for natural language. Output is always a `ParsedIntent` struct — the rest of the system never sees raw text.
+When you type `open 5x long SOL $500`:
 
-**Risk & Safety.** Four independent gates in series: signing guard (per-trade limits + rate limiter), circuit breaker (session/daily loss caps), kill switch (master toggle), and exposure control (portfolio-level cap). Every trade passes through all four. See [Risk & Safety Systems](./risk-safety.md) for full detail.
+1. **Registry lookup.** Command matched via `COMMAND_REGISTRY` — O(1) for single-token commands, pattern matching for parameterized commands.
 
-**Execution Engine.** The order engine handles market orders, limit orders, and TP/SL. The TX builder compiles `MessageV0` with cached blockhash and dynamic compute units. Pre-flight simulation runs on-chain before broadcast — program errors abort before funds are at risk.
+2. **Parse.** `flexParseOpen()` extracts: market=SOL, side=long, leverage=5, collateral=$500. Fuzzy correction handles typos (Levenshtein distance). Market aliases resolved (`solana` → `SOL`).
 
-**Data & Infrastructure.** The Flash SDK client (live or simulated) sits behind the `IFlashClient` interface. The RPC manager handles multi-endpoint failover with slot lag detection. Pyth Hermes provides oracle prices with a 5s cache. State cache holds positions and balances with a 30s TTL, invalidated post-trade.
+3. **Pool resolution.** `getPoolForMarket("SOL")` maps to `Crypto.1` from Flash SDK's PoolConfig.
 
-**Flash Trade Protocol.** The on-chain program on Solana. Flash Terminal reads all parameters (fees, margins, leverage limits, liquidation math) from `CustodyAccount` state. It never overrides protocol values.
+4. **Price fetch.** Pyth Hermes oracle returns current price with staleness (<30s), confidence, and deviation checks.
 
-## Execution Pipeline
+5. **Risk gates.** Five gates in series — signing guard (limits), rate limiter, circuit breaker, kill switch, exposure control. Any gate can reject.
 
-When you type `open 5x long SOL $100`, seven steps execute in sequence:
+6. **Confirmation.** Full trade summary displayed. User types `yes`.
 
-1. **Parse.** Regex parser extracts intent: market=SOL, side=long, leverage=5, collateral=$100.
-2. **Resolve pool.** `getPoolForMarket()` maps SOL to the correct Flash Trade pool from on-chain `PoolConfig`.
-3. **Fetch price.** Pyth Hermes oracle returns the current price with staleness (<30s), confidence (<2%), and deviation checks.
-4. **Signing guard.** Trade parameters are validated against configured limits. Full summary is displayed. You confirm.
-5. **Simulate.** Transaction is simulated on-chain. Program errors (insufficient margin, invalid leverage) abort here.
-6. **Freeze instructions.** `Object.freeze()` locks the instruction array. Program whitelist is enforced.
-7. **Broadcast.** `sendRawTransaction` with maxRetries:3. HTTP polling confirms. State reconciler verifies the position exists on-chain.
+7. **TX build.** `MessageV0.compile()` with dynamic compute units (simulate first, add buffer) and cached blockhash.
 
-No step is hidden. No step is skippable.
+8. **Pre-flight simulation.** Transaction simulated on-chain. Program errors abort here.
 
-## Data Flow
+9. **Instruction freeze.** `Object.freeze()` locks instruction array. Program whitelist enforced.
 
-Two flows run concurrently:
+10. **Broadcast.** `sendRawTransaction` with maxRetries:3. HTTP polling confirms. Rebroadcast every 800ms until confirmed.
 
-**Upward (market data).** Pyth oracle prices and on-chain state flow up through tiered caches (5s prices, 15s snapshots, 30s balances) into the interface layer. Cached data is always used — direct RPC queries are avoided.
+11. **Verification.** State reconciler confirms position exists on-chain.
 
-**Downward (execution).** Trade commands flow down through the four risk gates, into the order engine, through simulation, and onto the chain. Each gate can reject. Rejection is final for that command.
+## Data Layer
+
+**Upward flow (market data):**
+- Pyth oracle prices → 5s cache
+- Protocol snapshots → 15s cache
+- Wallet balances → 30s cache
+- Post-trade: balance cache invalidated immediately
+
+**Downward flow (execution):**
+- Commands → risk gates → TX build → simulate → broadcast → confirm
+- Each gate can reject. Rejection is final.
+
+## RPC Management
+
+- Multi-endpoint failover with health monitoring every 30s
+- Slot lag detection (>50 slots triggers failover)
+- Leader routing for faster transaction landing
+- Automatic recovery when primary endpoint returns
+
+## Tool Categories
+
+| Category | Count | Examples |
+|:---------|:------|:--------|
+| Trading | 7 | open, close, add/remove collateral, positions, portfolio |
+| Orders | 7 | limit, cancel, edit, TP/SL, order list |
+| Analytics | 5 | volume, OI, leaderboard, fees, profiles |
+| Earn | 19+ | add/remove liquidity, stake, claim, simulate, rotate |
+| FAF | 10+ | stake, unstake, claim, tier, points, referral |
+| Protocol | 25+ | inspect, health, audit, funding, depth, liquidations |
+| Wallet | 10 | connect, import, list, use, disconnect, balances |
+| System | 10+ | doctor, RPC management, TX debug, metrics |
+
+Total: **100+ registered tools** covering trading, portfolio, analytics, earn, FAF, wallet, protocol inspection, RPC management, transaction debugging, and system diagnostics.
+
+## Key Design Decisions
+
+- **No AI in execution path.** The parser is deterministic (regex + fuzzy correction). AI is only used for optional natural language queries and never executes trades.
+- **Risk gates are in series.** All five must pass. No shortcut path exists.
+- **Simulation uses the same code path.** Only the client implementation differs (SimulatedFlashClient vs FlashClient).
+- **All state from chain is authoritative.** Local caches are convenience — the reconciler syncs every 60s in live mode.
+
+## Next Steps
+
+- [Risk & Safety](/guide/risk-safety) — All 10 safety layers explained
+- [Configuration](/guide/configuration) — Tune compute units and limits
+- [Commands](/guide/commands) — Full command reference

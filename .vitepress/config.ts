@@ -3,13 +3,13 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Flash Terminal',
   titleTemplate: ':title — Flash Terminal',
-  description: 'Trade Solana perpetual futures from the command line. Simple, safe, powerful.',
+  description: 'Professional CLI for trading Solana perpetual futures on Flash Trade. Fast, deterministic, production-grade.',
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['meta', { name: 'theme-color', content: '#26d97f' }],
-    ['meta', { name: 'og:title', content: 'Flash Terminal — Documentation' }],
-    ['meta', { name: 'og:description', content: 'Trade Solana perpetual futures from the command line.' }],
+    ['meta', { name: 'og:title', content: 'Flash Terminal — Professional Trading CLI' }],
+    ['meta', { name: 'og:description', content: 'Trade Solana perpetual futures from the command line. Fast, deterministic, built for real traders.' }],
     ['meta', { name: 'og:type', content: 'website' }],
   ],
 
@@ -32,7 +32,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/introduction', activeMatch: '/guide/' },
       { text: 'Reference', link: '/reference/trading-commands', activeMatch: '/reference/' },
       {
-        text: 'Protocol',
+        text: 'Links',
         items: [
           { text: 'Flash Trade', link: 'https://www.flash.trade/' },
           { text: 'Flash Trade Docs', link: 'https://docs.flash.trade/' },
@@ -42,7 +42,7 @@ export default defineConfig({
       },
       {
         text: 'GitHub',
-        link: 'https://github.com/Abdr007/flash-terminal',
+        link: 'https://github.com/AustinJ712/flash-terminal',
       },
     ],
 
@@ -67,10 +67,10 @@ export default defineConfig({
           ],
         },
         {
-          text: 'Using Flash Terminal',
+          text: 'Usage',
           collapsed: false,
           items: [
-            { text: 'Basic Commands', link: '/guide/basic-commands' },
+            { text: 'Commands', link: '/guide/commands' },
             { text: 'Trading Guide', link: '/guide/trading-guide' },
             { text: 'Simulation Mode', link: '/guide/simulation' },
           ],
@@ -79,6 +79,7 @@ export default defineConfig({
           text: 'Advanced',
           collapsed: false,
           items: [
+            { text: 'Earn & Liquidity', link: '/guide/earn' },
             { text: 'Risk & Safety', link: '/guide/risk-safety' },
             { text: 'Architecture', link: '/guide/architecture' },
           ],
@@ -111,7 +112,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Abdr007/flash-terminal' },
+      { icon: 'github', link: 'https://github.com/AustinJ712/flash-terminal' },
     ],
 
     search: {
@@ -122,8 +123,8 @@ export default defineConfig({
     },
 
     footer: {
-      message: 'Flash Terminal — Trade Solana Perpetual Futures from the CLI',
-      copyright: 'MIT License · Built for the Flash Trade protocol on Solana',
+      message: 'Flash Terminal \u2014 Professional Trading CLI for Flash Trade on Solana',
+      copyright: 'MIT License',
     },
 
     outline: {

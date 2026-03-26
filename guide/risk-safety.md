@@ -1,75 +1,122 @@
-# Risk & Safety Systems
+# Risk & Safety
 
-Safety in Flash Terminal is not a feature. It is infrastructure. Every trade passes through 10 independent safety layers before it touches the chain. They are always active. They cannot be bypassed by command input or by configuration. There is no flag to turn them off.
-
-This is the non-negotiable contract: **no transaction is signed unless every layer approves it.**
+Flash Terminal has 10 independent safety layers protecting every live trade. They cannot be bypassed by command input or by configuration.
 
 ## Safety Layers
 
-| # | Layer | What It Does | Scope |
-|:--|:------|:-------------|:------|
-| 1 | **Signing Guard** | Displays full trade summary (market, side, leverage, collateral, size, fees, wallet) and requires explicit confirmation before signing. Enforces per-trade collateral, position size, and leverage limits. Rate limiter: 10 trades/min, 3s minimum delay. | Every trade |
-| 2 | **Circuit Breaker** | Halts all trading when cumulative session loss or daily loss exceeds configured threshold. Manual restart required to reset. | Session-wide |
-| 3 | **Kill Switch** | Master toggle via `TRADING_ENABLED=false`. Disables all 4 trade operations instantly. Risk monitoring and position queries continue. | Global |
-| 4 | **Execution Kill-Switch** | Auto-halts on execution degradation: slippage >50bps across 5 trades, 3 consecutive fill failures, or p90 latency >10s. 5-minute cooldown before auto-recovery. | Automatic |
-| 5 | **Transaction Simulation** | On-chain simulation before broadcast. Program errors (insufficient collateral, invalid market, leverage violation) abort immediately. No funds at risk. | Every TX |
-| 6 | **Program Whitelist** | Only Flash Trade program IDs (loaded from `PoolConfig`) and Solana system programs (System, Token, ATA, ComputeBudget) are permitted in instruction targets. Unknown programs are rejected. | Every TX |
-| 7 | **Instruction Freeze** | `Object.freeze()` applied to the instruction array after validation. Prevents mutation between validation and signing. | Every TX |
-| 8 | **Duplicate Detection** | Signature cache with 120s TTL. If a transaction with the same `action:market:side[:amount]` key recently landed, resubmission is blocked. | Every TX |
-| 9 | **Crash Recovery** | Trade journal records pending transactions. On restart, the reconciler verifies whether pending TXs landed on-chain and corrects local state. | Startup |
-| 10 | **State Reconciliation** | Syncs local position state with blockchain every 60 seconds and after every confirmed trade. On-chain state is always authoritative. Discrepancies are logged and auto-corrected. | Continuous |
+### 1. Trade Confirmation Gate
 
-## Circuit Breaker Configuration
+Every live trade displays a full summary before signing:
+
+```
+  Market:      SOL/USD LONG
+  Leverage:    5x
+  Collateral:  $500.00
+  Size:        $2,500.00
+  Est. Fee:    $2.00
+  Est. Liq:    $121.39
+  Wallet:      ABDR...7x4f
+
+  Proceed? [y/N]
+```
+
+You must type `yes`. There is no auto-confirm in live mode.
+
+### 2. Signing Guard
+
+Per-trade limits enforced before any transaction is signed:
 
 ```bash
-# Session loss threshold — trading halts when cumulative session PnL drops below this
-MAX_SESSION_LOSS_USD=500
-
-# Daily loss threshold — resets at midnight UTC
-MAX_DAILY_LOSS_USD=1000
-
-# Maximum portfolio exposure as percentage of account value
-MAX_PORTFOLIO_EXPOSURE=0.8
+MAX_COLLATERAL_PER_TRADE=1000    # Max collateral per trade
+MAX_POSITION_SIZE=50000          # Max position size
+MAX_LEVERAGE=50                  # Max leverage
 ```
 
-When the circuit breaker trips, all trade operations return an error immediately. Monitoring and position queries remain functional. To resume trading, restart the terminal session.
+### 3. Rate Limiter
 
-## Risk Monitor
+Prevents rapid-fire trades:
 
-The background risk monitor tracks liquidation distance on all open positions. Enable or disable it at runtime:
-
-```
-risk monitor on
-risk monitor off
+```bash
+MAX_TRADES_PER_MINUTE=10         # Default: 10
+MIN_DELAY_BETWEEN_TRADES_MS=3000 # Default: 3 seconds
 ```
 
-**Refresh schedule:**
+### 4. Circuit Breaker
 
-| Data | Interval |
-|:-----|:---------|
-| Oracle prices | Every 5s |
-| Position state | Every 20s |
+Halts all trading when cumulative losses exceed thresholds:
 
-**Alert tiers with hysteresis:**
+```bash
+MAX_SESSION_LOSS_USD=500         # Per-session loss limit
+MAX_DAILY_LOSS_USD=1000          # Per-day loss limit (resets midnight UTC)
+```
 
-| Level | Enter Threshold | Recover Threshold | Action |
-|:------|:----------------|:-------------------|:-------|
-| SAFE | Default | >35% distance | Normal operation |
-| WARNING | <30% distance | >35% to recover | Alert with collateral suggestion |
-| CRITICAL | <15% distance | >18% to recover | Urgent alert, auto-calculated collateral needed |
+When tripped, all trade operations return an error immediately. Monitoring and position queries remain functional. Restart the terminal to reset.
 
-Hysteresis prevents oscillation. A position at 31% distance stays WARNING until it crosses 35% — it does not flicker between SAFE and WARNING.
+### 5. Kill Switch
 
-When a position enters WARNING or CRITICAL, the monitor runs a binary search (max 20 iterations, tolerance-based early break) to calculate the exact collateral addition needed to restore the position to a safe distance.
+Master toggle that disables all trades:
 
-Alerts fire only on level transitions. No repeated notifications for the same state.
+```bash
+TRADING_ENABLED=false
+```
 
-## TP/SL Engine
+### 6. Exposure Control
 
-Take-profit and stop-loss orders are evaluated locally against oracle prices:
+Limits total portfolio exposure as a fraction of account value:
 
-- **Evaluation interval:** every 5 seconds
-- **2-tick confirmation:** price must satisfy the condition on two consecutive checks before triggering
-- **Spike protection:** a single anomalous tick does not execute the order
+```bash
+MAX_PORTFOLIO_EXPOSURE=0.8       # 80% max
+```
 
-This design filters oracle noise and flash wicks. The 10-second effective latency (2 ticks x 5s) is the tradeoff for not closing positions on bad data.
+### 7. Pre-Flight Simulation
+
+Every transaction is simulated on-chain before broadcast. Program errors (insufficient margin, invalid leverage, etc.) abort before any funds are at risk.
+
+### 8. Program Whitelist
+
+Only approved programs can be targeted by transactions:
+- Solana system programs (System, Token, ATA, ComputeBudget)
+- Flash Trade programs (loaded dynamically from PoolConfig)
+
+Any instruction targeting an unknown program is rejected.
+
+### 9. Instruction Freeze
+
+After validation, the instruction array is frozen with `Object.freeze()`. No code can mutate instructions between validation and signing.
+
+### 10. Trade Mutex & Duplicate Detection
+
+- A mutex prevents concurrent transaction submissions
+- Recent transaction signatures are cached (60s TTL) to detect and block duplicate submissions
+- Flash Trade rejects duplicate positions on the same market/side
+
+## Signing Audit Log
+
+Every trade attempt is logged to `~/.flash/signing-audit.log`:
+
+```
+2026-03-27T14:32:01Z | OPEN | SOL LONG | 5x | $500 | CONFIRMED
+2026-03-27T14:35:12Z | CLOSE | SOL LONG | CONFIRMED
+2026-03-27T14:40:00Z | OPEN | BTC SHORT | REJECTED:RATE_LIMIT
+```
+
+This log never contains private keys or sensitive data.
+
+## Simulation Safety
+
+Simulation mode adds another layer: **no transactions are ever signed or broadcast**. The blockchain is never touched. Mode is locked per session to prevent accidental live trading.
+
+## Diagnostics
+
+```bash
+doctor              # Full system health check
+risk report         # Position risk assessment
+exposure            # Portfolio exposure breakdown
+system audit        # Protocol data integrity verification
+```
+
+## Next Steps
+
+- [Configuration](/guide/configuration) — Set your risk limits
+- [Trading Guide](/guide/trading-guide) — Understand liquidation
+- [Troubleshooting](/guide/troubleshooting) — Fix common issues
