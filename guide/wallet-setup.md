@@ -80,13 +80,66 @@ Check balances inside Flash Terminal:
 flash [live] > wallet tokens
 ```
 
-## Using an Existing Wallet
+## Already Have a Wallet?
 
-If you already have a keypair JSON file:
+If you already have a Solana wallet, you just need to find its JSON file.
+
+### Find Your Existing Keypair
+
+**If you used Solana CLI before:**
 
 ```bash
-# Set path directly
-WALLET_PATH=/path/to/your/keypair.json
+# Check the default location
+ls ~/.config/solana/id.json
+
+# See which keypair Solana CLI is using
+solana config get
+# Look for "Keypair Path:" in the output
+```
+
+**If you have a Phantom / Solflare / Backpack wallet:**
+
+These browser wallets don't store a JSON file on disk. You need to **export your private key** and convert it:
+
+1. Open your wallet app
+2. Go to **Settings** > **Export Private Key** (or "Show Secret Recovery Phrase")
+3. Copy the **private key** (base58 string, NOT the seed phrase)
+4. Convert it to a JSON keypair file:
+
+```bash
+# Install the Solana CLI first, then:
+solana-keygen recover --outfile ~/.config/solana/trading.json
+# Paste your private key when prompted
+```
+
+Or if you have the **base58 private key** directly, you can import it using:
+
+```bash
+echo '["YOUR_BASE58_KEY"]' | solana-keygen recover --outfile ~/.config/solana/trading.json
+```
+
+::: warning
+Only export your private key on a trusted device. Never paste it into websites or untrusted apps.
+:::
+
+**If you have multiple keypair files:**
+
+```bash
+# List all JSON files in the default Solana config directory
+ls ~/.config/solana/*.json
+
+# Check which address each file maps to
+solana-keygen pubkey ~/.config/solana/id.json
+solana-keygen pubkey ~/.config/solana/trading.json
+```
+
+### Use It in Flash Terminal
+
+Once you've located your JSON file, point Flash Terminal to it:
+
+```bash
+# In your .env file
+WALLET_PATH=~/.config/solana/id.json
 
 # Or import inside the terminal
 flash > wallet import /path/to/keypair.json
