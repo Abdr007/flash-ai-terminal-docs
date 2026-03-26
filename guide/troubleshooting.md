@@ -174,4 +174,4 @@ Logs rotate at 10MB. API keys are automatically scrubbed.
 
 - Run `doctor` for diagnostics
 - Check the [FAQ](/guide/faq)
-- Open an issue on [GitHub](https://github.com/AustinJ712/flash-terminal/issues)
+- Open an issue on [GitHub](https://github.com/Abdr007/flash-terminal/issues)

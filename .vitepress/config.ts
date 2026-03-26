@@ -42,7 +42,7 @@ export default defineConfig({
       },
       {
         text: 'GitHub',
-        link: 'https://github.com/AustinJ712/flash-terminal',
+        link: 'https://github.com/Abdr007/flash-terminal',
       },
     ],
 
@@ -112,7 +112,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/AustinJ712/flash-terminal' },
+      { icon: 'github', link: 'https://github.com/Abdr007/flash-terminal' },
     ],
 
     search: {

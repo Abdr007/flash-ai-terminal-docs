@@ -146,4 +146,4 @@ No. Flash Terminal is CLI-only. For a web UI, use [flash.trade](https://www.flas
 - Run `help` inside Flash Terminal
 - Check [Troubleshooting](/guide/troubleshooting)
 - Run `doctor` for diagnostics
-- Open a [GitHub issue](https://github.com/AustinJ712/flash-terminal/issues)
+- Open a [GitHub issue](https://github.com/Abdr007/flash-terminal/issues)

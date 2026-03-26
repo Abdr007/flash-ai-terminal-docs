@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://flash-terminal-docs.vercel.app">Live Site</a> &nbsp;·&nbsp;
-  <a href="https://github.com/AustinJ712/flash-terminal">Main Repository</a> &nbsp;·&nbsp;
+  <a href="https://github.com/Abdr007/flash-terminal">Main Repository</a> &nbsp;·&nbsp;
   <a href="https://www.flash.trade">Flash Trade</a>
 </p>
 
@@ -18,7 +18,7 @@
 
 ## Overview
 
-Documentation site for [Flash Terminal](https://github.com/AustinJ712/flash-terminal) — a professional CLI trading terminal for the Flash Trade perpetuals protocol on Solana.
+Documentation site for [Flash Terminal](https://github.com/Abdr007/flash-terminal) — a professional CLI trading terminal for the Flash Trade perpetuals protocol on Solana.
 
 Built with [VitePress](https://vitepress.dev), styled to match the Flash Trade ecosystem.
 
@@ -59,4 +59,4 @@ The site is deployed on [Vercel](https://vercel.com). Every push to `main` trigg
 
 ## License
 
-MIT — Part of the [Flash Terminal](https://github.com/AustinJ712/flash-terminal) project.
+MIT — Part of the [Flash Terminal](https://github.com/Abdr007/flash-terminal) project.

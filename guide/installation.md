@@ -24,7 +24,7 @@ flash --version
 ## Install from Source
 
 ```bash
-git clone https://github.com/AustinJ712/flash-terminal.git
+git clone https://github.com/Abdr007/flash-terminal.git
 cd flash-terminal
 npm install
 npm run build
